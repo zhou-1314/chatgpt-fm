@@ -103,9 +103,20 @@ OpenAI 官网的文章全部落在 `https://openai.com/index/<slug>`，靠 URL �
 ### 本地验证
 
 ```bash
-python -m unittest discover -s tests -v    # 纯函数单测，不联网
-chatgpt-fm discover                        # 真实联网发现（约 20 秒）
+uv run python -m unittest discover -s tests   # 67 个单测，不联网、不调模型
+chatgpt-fm discover                           # 真实联网发现（约 1 分半，含 sitemap 兜底）
+chatgpt-fm run --source engineering --limit 1 # 跑通一整篇（这步会真的调模型）
 ```
+
+### 踩坑备忘
+
+- **文章页 403**：openai.com 有 Cloudflare 机器人校验，一定要装上 `curl_cffi`
+  （已在依赖里），否则只有 `sitemap.xml` / `rss.xml` 能拿到，正文全军覆没。
+- **环境里设了 `ALL_PROXY=socks5://...`**：httpx 会要求额外的 socks 支持，报
+  `Using SOCKS proxy, but the 'socksio' package is not installed`。抓取层会自动
+  降级到 curl / curl_cffi 不受影响，但**解读后端（codex / deepseek）走的是 httpx，
+  会直接失败**。解决办法二选一：`uv pip install "httpx[socks]"`，或者跑命令前
+  `unset ALL_PROXY all_proxy`（HTTP 代理变量保留即可）。
 
 ---
 
