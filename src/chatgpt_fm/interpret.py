@@ -452,7 +452,9 @@ def han_count(text: str) -> int:
     return len(re.findall(r"[一-鿿]", text))
 
 
-MIN_HAN_CHARS = 6300  # 低于此字数（≈23 分钟）触发一次加长重写
+# 低于此字数触发一次加长重写。实测语速 262 汉字/分钟，6000 字 ≈ 22.9 分钟，
+# 正好压在 DURATION_MIN 上方。
+MIN_HAN_CHARS = 6000
 
 
 def interpret(article_meta: dict, article_body: str, slug: str) -> dict:
@@ -482,7 +484,7 @@ def interpret(article_meta: dict, article_body: str, slug: str) -> dict:
     if han_count(result["script"]) < MIN_HAN_CHARS:
         retry_prompt = prompt + (
             f"\n\n注意：你上一次生成的稿子只有 {han_count(result['script'])} 个汉字，"
-            "太短了。这次必须写满 6800 个汉字以上，把核心内容和实践应用部分大幅展开。"
+            "太短了。这次必须写满 6600 个汉字以上，把核心内容和实践应用部分大幅展开。"
         )
         try:
             retry = parse_output(run_llm(retry_prompt))
