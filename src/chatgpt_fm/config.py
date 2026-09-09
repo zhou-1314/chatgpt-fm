@@ -231,9 +231,15 @@ PODCAST_COVER = f"{FEED_BASE_URL}/cover.jpg"     # docs/cover.jpg，1400×1400
 PODCAST_CATEGORY = "Technology"
 PODCAST_LANGUAGE = "zh-cn"
 
-# 时长目标（分钟），超出范围会在产出时告警
-DURATION_MIN = 22
-DURATION_MAX = 28
+# 时长告警阈值（分钟）。这是**异常检测**，不是质量门槛——超了不用管，
+# 只是提醒去看一眼是不是模型输出崩了。
+#
+# 别把它设窄：实测前 10 集时长均值 26.3 分钟、标准差 2.9 分钟
+# （汉字数 5583-7960，均值 6854）。模型对 prompt 里的字数指令只在均值上
+# 服从，单集方差压不下去，把区间设成 22-28（宽度 6 分钟，比 ±1σ 还窄）
+# 的结果是 10 集里 6 集误报。放到约 ±2σ，才只在真出问题时响。
+DURATION_MIN = 20
+DURATION_MAX = 32
 
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
