@@ -146,7 +146,17 @@ chatgpt-fm run --source engineering --limit 1 # 跑通一整篇（这步会真�
   `Using SOCKS proxy, but the 'socksio' package is not installed`。抓取层会自动
   降级到 curl / curl_cffi 不受影响，但**解读后端（codex / deepseek）走的是 httpx，
   会直接失败**。解决办法二选一：`uv pip install "httpx[socks]"`，或者跑命令前
-  `unset ALL_PROXY all_proxy`（HTTP 代理变量保留即可）。
+  `unset ALL_PROXY all_proxy`（HTTP 代理变量保留即可）。实测 unset 之后抓取
+  从 97 秒降到 3.5 秒——因为不用每次都退到 curl_cffi 兜底了。
+- **抓着抓着整站连不上**：openai.com 会按出口 IP 限流。抓太密时文章页、
+  sitemap、RSS 会一起变成连接被 RST（`SSL_ERROR_SYSCALL`），几分钟后自动恢复。
+  `net.py` 已经内置 2 秒最小请求间隔 + 连续失败 3 篇熔断来躲这个；如果你的
+  网络环境更敏感，把 `net.MIN_REQUEST_INTERVAL` 调大即可。
+  顺带一提，这种时候 edge-tts 往往也一起挂，别误判成 TTS 坏了。
+- **codex 撞周限额**：ChatGPT Pro 的周限额一撞就是好几天（响应体里的
+  `resets_in_seconds` 实测有 51 万秒 ≈ 6 天）。autorun 会识别出来直接停下
+  而不是睡等，这时候把 `.env` 里的 `INTERPRET_PROVIDER` 换成 `claude` 或
+  `deepseek` 继续跑就行，已完成的阶段不会重做。
 
 ---
 
