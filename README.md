@@ -89,6 +89,17 @@ chatgpt-fm publish            # 构建站点并推到 gh-pages，Pages 托管
 
 > 📘 数据源发现机制、部署细节、全部命令、踩坑备忘 👉 **[DEVELOPMENT.md](DEVELOPMENT.md)**
 
+## 🙏 致谢
+
+本项目脱胎于 **[yuc16/claude-fm](https://github.com/yuc16/claude-fm)** —— 一档把
+Anthropic 官方博客做成中文音频解读的播客。整条流水线的设计思路
+（抓取 → 模型解读 → TTS → 上传包 → RSS → 目录）、状态机与幂等策略、
+prompt 框架、目录结构和命名风格都沿用自它，本项目主要替换了数据源那一层，
+把 anthropic.com 换成了 openai.com。
+
+感谢原作者把这套做法完整地开源出来。如果你关注 Anthropic 的内容，推荐直接去听
+[Claude FM](https://github.com/yuc16/claude-fm)。
+
 ---
 
 <div align="center">
