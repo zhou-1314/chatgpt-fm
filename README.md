@@ -80,7 +80,7 @@ chatgpt-fm autorun --source research      # 无人值守，撞限额自动等重
 chatgpt-fm news                           # 把上一周的 news 打包成「一周快讯」
 chatgpt-fm weekly                         # 每周日一条命令：四源增量 + news 周报 + RSS + 目录
 chatgpt-fm feed                           # 生成播客 RSS docs/feed.xml
-chatgpt-fm publish                        # 发布到 GitHub：音频→Release，feed+目录页→Pages
+chatgpt-fm publish                        # 构建站点并推到 gh-pages 分支（Pages 托管）
 chatgpt-fm catalog                        # 生成 CATALOG.md 并刷新 README 集数
 chatgpt-fm voices                         # 生成音色试听样品
 chatgpt-fm status                         # 查看各篇进度
@@ -93,30 +93,46 @@ chatgpt-fm status                         # 查看各篇进度
 
 | 放什么 | 放哪 | 为什么 |
 |---|---|---|
-| 代码、中文解读稿、英文原文 | 仓库本体 | 纯文本，几 MB |
-| `feed.xml`、网页目录页 | GitHub Pages（`main` 分支的 `docs/`） | 几十 KB，随仓库一起提交 |
-| 单集音频 mp3 | GitHub Release 附件（tag `audio`） | Pages 单站点上限 1GB，几百集音频装不下；Release 附件单文件上限 2GB、总量不限 |
+| 代码、中文解读稿、英文原文 | `main` 分支 | 纯文本，几百 KB，clone 很快 |
+| `feed.xml`、目录页、封面、**全部音频** | `gh-pages` 分支，由 Pages 提供 | 站点产物单独一个分支，不污染 main 的历史 |
 
-音频附件一律按集号命名（`EP12.mp3`）。slug 里有空格、中文和 `’`，GitHub 上传时会自己
-改名，改完的下载地址会和 feed 里写的对不上；集号是 ASCII、唯一、分配后不再变。
+**音频为什么不能放 GitHub Release**（踩过的坑）：Release 的下载地址返回
+
+```
+content-type: application/octet-stream
+content-disposition: attachment; filename=EP1.mp3
+```
+
+`attachment` 是致命的——它告诉客户端"这是要下载保存的附件"，播放器据此拒绝内联播放，
+在 Apple Podcasts 上就表现为「无法播放」。Pages 对 `.mp3` 返回 `audio/mp3`、不带
+`content-disposition`、支持 Range（206），才是播客客户端要的。
+
+音频在站点里一律按集号命名（`EP12.mp3`）：slug 里有空格、中文和 `’`，直接做 URL 要转义，
+集号是 ASCII、唯一、分配后不再变。
+
+> ⚠️ **容量上限**：Pages 单站点 1GB，按单集约 9MB 算大概 **111 集封顶**。
+> `publish` 在站点音频超过 900MB 时会告警。超了就把音频挪到对象存储
+> （Cloudflare R2 免费额度 10GB 且不收出站流量），改 `AUDIO_BASE_URL` 一个变量即可，
+> feed 逻辑不用动。
 
 每周更新的完整流程就两条命令：
 
 ```bash
 chatgpt-fm weekly     # 抓取 → 解读 → TTS → 上传包 → 刷新 CATALOG
-chatgpt-fm publish    # 音频传 Release，重写 docs/feed.xml 与 docs/index.html
-git add -A && git commit -m "weekly update" && git push
+chatgpt-fm publish    # 构建站点（feed + 目录页 + 封面 + 音频）并推到 gh-pages
+git add -A && git commit -m "weekly update" && git push   # main 只提交文字稿
 ```
 
-`publish` 是幂等的：附件同名同大小就跳过，只传新增或重新合成过的那几集，
-所以中断后重跑不会把已上传的音频再传一遍。先看看它打算做什么可以加 `--dry-run`。
+`publish` 是幂等的：音频同名同大小就跳过，只同步新增或重新合成过的那几集，
+所以中断后重跑不会让 git 认为几百个文件都变了。先看看它打算做什么可以加 `--dry-run`。
+gh-pages 分支用 `git worktree` 操作，不碰主工作区——流水线正在跑的时候也能发布。
 
 换成你自己的仓库/域名，改 `config.py` 里的 `GITHUB_OWNER` / `GITHUB_REPO`
 （也可以用同名环境变量或 `.env` 覆盖），或直接设 `FEED_BASE_URL` / `AUDIO_BASE_URL`。
 
 **首次部署还要做两件事**：
-1. 仓库 Settings → Pages → Source 选 `Deploy from a branch`，分支 `main`、目录 `/docs`；
-2. 放一张 ≥1400×1400 的封面图到 `docs/cover.jpg`（播客 App 要求，没有封面上不了架）。
+1. 仓库 Settings → Pages → Source 选 `Deploy from a branch`，分支 `gh-pages`、目录 `/`；
+2. 放一张 ≥1400×1400 的正方形封面到 `assets/cover.jpg`（播客 App 要求，没有封面上不了架）。
 
 ### 内容源是怎么发现的
 
