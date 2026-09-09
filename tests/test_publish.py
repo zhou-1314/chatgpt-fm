@@ -221,3 +221,30 @@ class TestStateNotPollutedByFetchFailure(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 cli._pipeline_one(ref, st)
         self.assertIn(ref.url, st["articles"])   # 已抓到的成果不能因后续失败被丢掉
+
+
+class TestNoBodySkip(unittest.TestCase):
+    """没有正文的页面重抓多少次都一样，必须永久跳过而不是每轮重试。"""
+
+    def test_nobody_marks_skipped_and_does_not_raise(self):
+        from chatgpt_fm import cli, fetch, sources
+        st = {"articles": {}}
+        ref = sources.ArticleRef(url="https://openai.com/index/shell", source="engineering")
+        with mock.patch.object(cli.fetch, "fetch_article",
+                               side_effect=fetch.NoBodyError("只提取到导航栏")), \
+             mock.patch.object(cli.state, "save"):
+            done = cli._pipeline_one(ref, st)
+        self.assertFalse(done)                                   # 不算完成
+        self.assertIn("skipped", st["articles"][ref.url])        # 但留了标记
+
+    def test_collect_refs_filters_skipped(self):
+        from chatgpt_fm import cli, sources
+        refs = {"engineering": [
+            sources.ArticleRef(url="https://openai.com/index/shell", source="engineering"),
+            sources.ArticleRef(url="https://openai.com/index/good", source="engineering"),
+        ]}
+        st = {"articles": {"https://openai.com/index/shell": {
+            "stages": {}, "skipped": "只提取到导航栏"}}}
+        with mock.patch.object(cli.sources, "discover_all", return_value=refs):
+            got = cli._collect_refs(st, source="engineering")
+        self.assertEqual([r.url for r in got], ["https://openai.com/index/good"])

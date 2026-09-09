@@ -180,3 +180,31 @@ class TestTtsRetryBackoff(unittest.TestCase):
         b = tts._RETRY_BACKOFF
         self.assertEqual(list(b), sorted(b))
         self.assertGreater(len(b), 2)
+
+
+class TestBodyDetection(unittest.TestCase):
+    """openai.com 有些落地页只有导航壳，trafilatura 提出几百字符的导航栏。
+    长度检查放得过去，但送进模型只会换回一句「你没给我正文」，白花一次调用。"""
+
+    NAV_SHELL = (
+        "Skip to main content\nResearch\nProducts\nBusiness\nDevelopers\n"
+        "Company\nFoundation\n(opens in a new window)\nLog in\nTry ChatGPT\n"
+        "OpenAI\nAugust 7, 2025\nAPI\nGPT-5: Amgen\nShare"
+    )
+    REAL_BODY = "\n\n".join(
+        "Over the past five months our team has been running an experiment that "
+        "reshaped how we think about building software with coding agents." for _ in range(4)
+    )
+
+    def test_nav_shell_is_rejected(self):
+        from chatgpt_fm import fetch
+        self.assertGreater(len(self.NAV_SHELL), 100)   # 长度是够的
+        self.assertFalse(fetch.has_body(self.NAV_SHELL))
+
+    def test_real_article_is_accepted(self):
+        from chatgpt_fm import fetch
+        self.assertTrue(fetch.has_body(self.REAL_BODY))
+
+    def test_empty_is_rejected(self):
+        from chatgpt_fm import fetch
+        self.assertFalse(fetch.has_body(""))

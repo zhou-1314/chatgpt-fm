@@ -84,6 +84,28 @@ def _extract_published(html: str) -> str:
     return ""
 
 
+class NoBodyError(RuntimeError):
+    """页面抓到了，但 trafilatura 没提出正文——多半是纯导航壳页。
+
+    这类页面（客户案例的短落地页居多）不该反复重试：内容本来就不存在，
+    重抓一百次也还是导航栏。上层据此把它永久标记为跳过。
+    """
+
+
+# 正文里一定会有成句的长行；导航栏则是一行一个短词。实测 26 篇正常文章的
+# 长行数是 17-71，3 篇纯导航壳页是 0，中间隔着很宽的空档，阈值取 3 很安全。
+_MIN_LONG_LINES = 3
+_LONG_LINE_CHARS = 80
+
+
+def has_body(markdown: str) -> bool:
+    """判断提取结果是真正文还是导航栏残渣。"""
+    long_lines = sum(
+        1 for line in markdown.splitlines() if len(line.strip()) >= _LONG_LINE_CHARS
+    )
+    return long_lines >= _MIN_LONG_LINES
+
+
 def fetch_article(ref: ArticleRef) -> dict:
     """抓取并解析一篇文章，返回 {title, published, markdown, slug}。"""
     html = net.get_text(ref.url, timeout=60)
@@ -96,8 +118,12 @@ def fetch_article(ref: ArticleRef) -> dict:
         favor_recall=True,
     )
     if not markdown or len(markdown) < 300:
-        raise RuntimeError(f"正文提取失败或过短: {ref.url}")
+        raise NoBodyError(f"正文提取失败或过短: {ref.url}")
     markdown = _clean_markdown(markdown)
+    # 长度够不代表提到了正文：壳页会提出几百字符的导航栏，够长但一个字正文都没有。
+    # 不拦住的话会白白花掉一次模型调用，而模型只能回一句"你没给我正文"。
+    if not has_body(markdown):
+        raise NoBodyError(f"只提取到导航栏，页面没有正文: {ref.url}")
 
     meta = trafilatura.extract_metadata(html)
     title = ref.title or (meta.title if meta and meta.title else "")

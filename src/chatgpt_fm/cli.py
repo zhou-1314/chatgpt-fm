@@ -69,6 +69,13 @@ def _pipeline_one(
         print(f"  [1/4] 抓取原文 {ref.url}")
         try:
             data = fetch.fetch_article(ref)
+        except fetch.NoBodyError as e:
+            # 页面本身没有正文（多为纯导航的落地页），重抓多少次都一样。
+            # 永久标记跳过，免得每轮都白抓一遍、甚至白花一次模型调用。
+            art["skipped"] = str(e)
+            state.save(st)
+            print(f"        跳过，页面没有正文（已永久标记）", flush=True)
+            return False
         except Exception:
             # get_article 是 setdefault，上面这一步已经把空壳记进 state 了。
             # 抓取失败就把它摘掉，否则 discover 会把这些 URL 当成"已处理过"，
@@ -175,6 +182,7 @@ def _collect_refs(
         refs.extend(
             r for r in source_refs
             if not st["articles"].get(r.url, {}).get("stages", {}).get("packaged")
+            and not st["articles"].get(r.url, {}).get("skipped")
             and _in_date_window(
                 st["articles"].get(r.url, {}).get("published", ""),
                 published_start,

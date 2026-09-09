@@ -1,5 +1,5 @@
 {
-  "next_episode": 23,
+  "next_episode": 28,
   "articles": {
     "https://openai.com/index/jalapeno-first-results": {
       "stages": {
@@ -333,13 +333,100 @@
     },
     "https://openai.com/index/openai-inbound-sales-assistant": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "engineering",
       "slug": "2025-09-29-Converting inbound leads into customers at OpenAI",
       "title": "Converting inbound leads into customers at OpenAI",
-      "published": "2025-09-29"
+      "published": "2025-09-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1624.1,
+      "episode": 23
+    },
+    "https://openai.com/index/openai-support-model": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-09-29-Improving support with every interaction at OpenAI",
+      "title": "Improving support with every interaction at OpenAI",
+      "published": "2025-09-29",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1558.7,
+      "episode": 24
+    },
+    "https://openai.com/index/openai-gtm-assistant": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-09-29-Driving sales productivity and customer success at OpenAI",
+      "title": "Driving sales productivity and customer success at OpenAI",
+      "published": "2025-09-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1211.6,
+      "episode": 25
+    },
+    "https://openai.com/index/openai-research-assistant": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-09-29-Empowering teams to unlock insights faster at OpenAI",
+      "title": "Empowering teams to unlock insights faster at OpenAI",
+      "published": "2025-09-29",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1412.3,
+      "episode": 26
+    },
+    "https://openai.com/index/gpt-5-coding-design": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-08-07-Coding and design with GPT-5",
+      "title": "Coding and design with GPT-5",
+      "published": "2025-08-07",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1316.1,
+      "episode": 27,
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-coding-design"
+    },
+    "https://openai.com/index/gpt-5-amgen": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2025-08-07-How Amgen uses GPT-5",
+      "title": "How Amgen uses GPT-5",
+      "published": "2025-08-07",
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-amgen"
+    },
+    "https://openai.com/index/gpt-5-cursor": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2025-08-07-How Cursor uses GPT-5",
+      "title": "How Cursor uses GPT-5",
+      "published": "2025-08-07",
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-cursor"
     }
   },
-  "voice_rotation": 22
+  "voice_rotation": 27
 }
