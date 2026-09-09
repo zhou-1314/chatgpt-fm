@@ -14,7 +14,315 @@
 <itunes:owner><itunes:name>ChatGPT FM</itunes:name><itunes:email>liguangpeng9495@gmail.com</itunes:email></itunes:owner>
 <image><url>https://zhou-1314.github.io/chatgpt-fm/cover.jpg</url><title>ChatGPT FM</title><link>https://zhou-1314.github.io/chatgpt-fm</link></image>
 <atom:link href="https://zhou-1314.github.io/chatgpt-fm/feed.xml" rel="self" type="application/rss+xml"/>
-<lastBuildDate>Wed, 09 Sep 2026 05:05:28 +0000</lastBuildDate>
+<lastBuildDate>Wed, 09 Sep 2026 14:31:08 +0000</lastBuildDate>
+<item>
+<title>EP21 · 2025-09-29 | OpenAI 内部实战：用 AI Agent 把海量合同变成可查询的结构化数据资产</title>
+<itunes:title>EP21 · 2025-09-29 | OpenAI 内部实战：用 AI Agent 把海量合同变成可查询的结构化数据资产</itunes:title>
+<itunes:episode>21</itunes:episode>
+<description><![CDATA[OpenAI 的财务团队面对合同量从数百份暴增至每月逾千份的压力，没有选择线性扩张人力，而是构建了一套三步式 AI 合同数据 agent：统一摄取、RAG 推理提取、专家审核。这期节目深入拆解这套系统的技术架构、设计哲学，以及对我们自己落地企业级 AI 应用的实践启示。
+
+- 为什么"直接把合同扔给大模型"不是正确解法，RAG 路线的核心优势在哪里
+- 数据摄取（PDF、扫描件、手写批注）为什么是最容易被低估的环节
+- 系统如何做到"展示推理过程"，而不只是给出一个黑盒答案
+- ASC 606 收入确认分类的场景说明了什么，AI 在合规场景能走多深
+- 五个企业落地 AI 文档处理系统时最常踩的坑，逐一拆解
+- 为什么"手动工作已经完成"比"AI 替代了决策"是更好的叙事框架]]></description>
+<content:encoded><![CDATA[OpenAI 的财务团队面对合同量从数百份暴增至每月逾千份的压力，没有选择线性扩张人力，而是构建了一套三步式 AI 合同数据 agent：统一摄取、RAG 推理提取、专家审核。这期节目深入拆解这套系统的技术架构、设计哲学，以及对我们自己落地企业级 AI 应用的实践启示。<br/><br/>- 为什么"直接把合同扔给大模型"不是正确解法，RAG 路线的核心优势在哪里<br/>- 数据摄取（PDF、扫描件、手写批注）为什么是最容易被低估的环节<br/>- 系统如何做到"展示推理过程"，而不只是给出一个黑盒答案<br/>- ASC 606 收入确认分类的场景说明了什么，AI 在合规场景能走多深<br/>- 五个企业落地 AI 文档处理系统时最常踩的坑，逐一拆解<br/>- 为什么"手动工作已经完成"比"AI 替代了决策"是更好的叙事框架]]></content:encoded>
+<pubDate>Mon, 29 Sep 2025 08:00:21 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP21.mp3" length="9754992" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2025-09-29-Turning contracts into searchable data at OpenAI</guid>
+<itunes:duration>27:05</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP20 · 2025-10-30 | OWL架构：OpenAI如何把Chromium变成独立服务层</title>
+<itunes:title>EP20 · 2025-10-30 | OWL架构：OpenAI如何把Chromium变成独立服务层</itunes:title>
+<itunes:episode>20</itunes:episode>
+<description><![CDATA[本期我们深度解析 OpenAI Atlas 浏览器背后的核心工程架构 OWL（OpenAI's Web Layer）。这套架构最核心的创新，是把 Chromium 引擎进程完全从 Atlas 主应用进程中剥离出来，运行在独立的服务层里，从而实现极速启动、崩溃隔离和高效迭代开发。这是一篇写给工程师看的架构决策故事，值得反复咀嚼。
+
+- 为什么把 Chromium 搬出主进程是革命性的：类比 Chrome 当年把标签页分进程，OWL 在更高维度延续了这个创新
+- OWL Client 与 OWL Host 的分层设计，以及 OpenAI 如何为 Chromium 的 Mojo IPC 写出 Swift 绑定
+- 跨进程渲染的实现：CALayer、NSView 与私有 API CALayerHost 如何配合实现零拷贝 GPU 合成
+- 输入事件如何从 macOS 的 NSEvent 翻译成 Blink 的 WebInputEvent，以及翻译被搬到 Swift 层的原因
+- Agent 模式下的三大技术难题：截图合成、事件沙盒隔离，以及基于 StoragePartition 的会话存储隔离
+- 对工程师的三个实践启示：大型依赖的接口层设计、AI 权限边界的架构强制执行、渐进迁移策略]]></description>
+<content:encoded><![CDATA[本期我们深度解析 OpenAI Atlas 浏览器背后的核心工程架构 OWL（OpenAI's Web Layer）。这套架构最核心的创新，是把 Chromium 引擎进程完全从 Atlas 主应用进程中剥离出来，运行在独立的服务层里，从而实现极速启动、崩溃隔离和高效迭代开发。这是一篇写给工程师看的架构决策故事，值得反复咀嚼。<br/><br/>- 为什么把 Chromium 搬出主进程是革命性的：类比 Chrome 当年把标签页分进程，OWL 在更高维度延续了这个创新<br/>- OWL Client 与 OWL Host 的分层设计，以及 OpenAI 如何为 Chromium 的 Mojo IPC 写出 Swift 绑定<br/>- 跨进程渲染的实现：CALayer、NSView 与私有 API CALayerHost 如何配合实现零拷贝 GPU 合成<br/>- 输入事件如何从 macOS 的 NSEvent 翻译成 Blink 的 WebInputEvent，以及翻译被搬到 Swift 层的原因<br/>- Agent 模式下的三大技术难题：截图合成、事件沙盒隔离，以及基于 StoragePartition 的会话存储隔离<br/>- 对工程师的三个实践启示：大型依赖的接口层设计、AI 权限边界的架构强制执行、渐进迁移策略]]></content:encoded>
+<pubDate>Thu, 30 Oct 2025 08:00:20 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP20.mp3" length="9886320" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2025-10-30-How we built OWL, the new architecture behind our ChatGPT-based browser, Atlas</guid>
+<itunes:duration>27:27</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP19 · 2025-11-05 | 印度独角兽CRED：用三套AI系统打造一千五百万高端会员的精品体验</title>
+<itunes:title>EP19 · 2025-11-05 | 印度独角兽CRED：用三套AI系统打造一千五百万高端会员的精品体验</itunes:title>
+<itunes:episode>19</itunes:episode>
+<description><![CDATA[本期我们深入剖析印度顶级金融科技公司CRED如何将AI嵌入其核心产品体验。CRED服务印度最富裕的一千五百万信用卡用户，他们与OpenAI合作打造了三套AI系统——Cleo、Thea、Stark，三个月内将客户满意度提升了十四个百分点，问题解决准确率达到百分之九十八。一起来看这家公司如何在规模化的同时保持"精品感"，以及它对我们自己做AI落地有什么实际启发。
+
+- Cleo 是面向最终用户的AI对话伴侣，处理信息查询、个性化咨询、交易操作三类递增难度的需求
+- Thea 是面向客服坐席的实时副驾驶，能处理文字、语音和印度混搭语"Hinglish"，总结对话并建议下一步
+- Stark 让运营团队从"几天才能更新SOP"变成"几分钟搞定"，大幅提升知识管理效率
+- 三个月内达到98%问题解决准确率，会话中途退出率下降31%，多意图对话解决率提升18%
+- "数据死角"检测机制：自动识别无法回答的用户问题并反馈到知识库，构建自学习闭环
+- AI落地关键不在技术选型，而在于找到与公司核心价值契合的切入点，先在有清晰指标的场景证明价值]]></description>
+<content:encoded><![CDATA[本期我们深入剖析印度顶级金融科技公司CRED如何将AI嵌入其核心产品体验。CRED服务印度最富裕的一千五百万信用卡用户，他们与OpenAI合作打造了三套AI系统——Cleo、Thea、Stark，三个月内将客户满意度提升了十四个百分点，问题解决准确率达到百分之九十八。一起来看这家公司如何在规模化的同时保持"精品感"，以及它对我们自己做AI落地有什么实际启发。<br/><br/>- Cleo 是面向最终用户的AI对话伴侣，处理信息查询、个性化咨询、交易操作三类递增难度的需求<br/>- Thea 是面向客服坐席的实时副驾驶，能处理文字、语音和印度混搭语"Hinglish"，总结对话并建议下一步<br/>- Stark 让运营团队从"几天才能更新SOP"变成"几分钟搞定"，大幅提升知识管理效率<br/>- 三个月内达到98%问题解决准确率，会话中途退出率下降31%，多意图对话解决率提升18%<br/>- "数据死角"检测机制：自动识别无法回答的用户问题并反馈到知识库，构建自学习闭环<br/>- AI落地关键不在技术选型，而在于找到与公司核心价值契合的切入点，先在有清晰指标的场景证明价值]]></content:encoded>
+<pubDate>Wed, 05 Nov 2025 08:00:19 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP19.mp3" length="8431056" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2025-11-05-How CRED is tapping AI to deliver premium customer experiences</guid>
+<itunes:duration>23:25</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP18 · 2025-12-12 | 四人团队加 Codex：OpenAI 如何在二十八天内把 Sora 搬上安卓</title>
+<itunes:title>EP18 · 2025-12-12 | 四人团队加 Codex：OpenAI 如何在二十八天内把 Sora 搬上安卓</itunes:title>
+<itunes:episode>18</itunes:episode>
+<description><![CDATA[二〇二五年十一月，OpenAI 仅用四名工程师和 AI 编程工具 Codex，在二十八天内将 Sora 视频生成应用从原型推上了 Android 全球上线，首日登顶 Play Store 榜首，二十四小时内用户生成视频超过一百万条。这篇工程复盘详细拆解了他们与 Codex 协作的工作流：如何让 AI 长时间无监督运行、如何把 iOS 代码库变成 Android 的"活体规格书"，以及为什么 AI 辅助开发不是降低了对工程师的要求，而是提高了。
+
+- 把 Codex 当成"刚入职的资深工程师"——它需要被告知偏好、展示范例，而不只是接收需求
+- 先建架构骨架和代表性功能，再放 Codex 进来填充——85% 的代码由 Codex 完成，但人定骨架
+- 引入"规划前置"循环：理解现有系统 → 制定实施计划 → 分步执行，让 Codex 可无监督运行超过二十四小时
+- AGENTS.md 文件是最低成本、最高收益的投资——相当于给每个 AI 会话的"员工手册"
+- 并行运行多个 Codex 会话如同管理一支工程团队，瓶颈从写代码转移到决策与审查
+- iOS 已有实现 → Codex 跨语言语义翻译 → Android：比 React Native 还彻底的"跨平台方案"]]></description>
+<content:encoded><![CDATA[二〇二五年十一月，OpenAI 仅用四名工程师和 AI 编程工具 Codex，在二十八天内将 Sora 视频生成应用从原型推上了 Android 全球上线，首日登顶 Play Store 榜首，二十四小时内用户生成视频超过一百万条。这篇工程复盘详细拆解了他们与 Codex 协作的工作流：如何让 AI 长时间无监督运行、如何把 iOS 代码库变成 Android 的"活体规格书"，以及为什么 AI 辅助开发不是降低了对工程师的要求，而是提高了。<br/><br/>- 把 Codex 当成"刚入职的资深工程师"——它需要被告知偏好、展示范例，而不只是接收需求<br/>- 先建架构骨架和代表性功能，再放 Codex 进来填充——85% 的代码由 Codex 完成，但人定骨架<br/>- 引入"规划前置"循环：理解现有系统 → 制定实施计划 → 分步执行，让 Codex 可无监督运行超过二十四小时<br/>- AGENTS.md 文件是最低成本、最高收益的投资——相当于给每个 AI 会话的"员工手册"<br/>- 并行运行多个 Codex 会话如同管理一支工程团队，瓶颈从写代码转移到决策与审查<br/>- iOS 已有实现 → Codex 跨语言语义翻译 → Android：比 React Native 还彻底的"跨平台方案"]]></content:encoded>
+<pubDate>Fri, 12 Dec 2025 08:00:18 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP18.mp3" length="8328240" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2025-12-12-How We Used Codex to Ship Sora for Android in 28 Days</guid>
+<itunes:duration>23:08</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP17 · 2026-01-21 | AI 导演上岗：Higgsfield 如何把简单想法变成电影级社交视频</title>
+<itunes:title>EP17 · 2026-01-21 | AI 导演上岗：Higgsfield 如何把简单想法变成电影级社交视频</itunes:title>
+<itunes:episode>17</itunes:episode>
+<description><![CDATA[本期深度解析 OpenAI 官网的工程案例文章，聚焦生成式媒体平台 Higgsfield 如何用 GPT 四点一、GPT 五和 Sora 二协作，把一个产品链接变成可直接发布的电影级短视频。这篇文章发表于 2026 年 1 月，距今约八个月，其中关于系统设计思路和多模型路由哲学的内容，对今天的 AI 应用开发者仍然有很强的参考价值。
+
+**本期要点**
+
+- AI 如何扮演"导演"：Higgsfield 的电影逻辑层把用户模糊的创意意图，翻译成视频模型能执行的结构化拍摄方案
+- 把病毒式传播变成科学：以"分享速度"为核心指标，动态维护每日更新的视频预设库
+- Click-to-Ad：从产品链接到广告视频的全自动流程，上线后专业用户采用率超 20%
+- 多模型路由哲学：GPT-4.1 mini 处理确定性任务，GPT-5 处理模糊推断——"行为特长"比"找最强模型"更重要
+- 视觉连贯性的技术突破如何解锁了此前根本不可行的内容形式
+- 工程师可以直接借鉴的三个设计模式：意图解析层、多模型路由、动态知识库]]></description>
+<content:encoded><![CDATA[本期深度解析 OpenAI 官网的工程案例文章，聚焦生成式媒体平台 Higgsfield 如何用 GPT 四点一、GPT 五和 Sora 二协作，把一个产品链接变成可直接发布的电影级短视频。这篇文章发表于 2026 年 1 月，距今约八个月，其中关于系统设计思路和多模型路由哲学的内容，对今天的 AI 应用开发者仍然有很强的参考价值。<br/><br/>**本期要点**<br/><br/>- AI 如何扮演"导演"：Higgsfield 的电影逻辑层把用户模糊的创意意图，翻译成视频模型能执行的结构化拍摄方案<br/>- 把病毒式传播变成科学：以"分享速度"为核心指标，动态维护每日更新的视频预设库<br/>- Click-to-Ad：从产品链接到广告视频的全自动流程，上线后专业用户采用率超 20%<br/>- 多模型路由哲学：GPT-4.1 mini 处理确定性任务，GPT-5 处理模糊推断——"行为特长"比"找最强模型"更重要<br/>- 视觉连贯性的技术突破如何解锁了此前根本不可行的内容形式<br/>- 工程师可以直接借鉴的三个设计模式：意图解析层、多模型路由、动态知识库]]></content:encoded>
+<pubDate>Wed, 21 Jan 2026 08:00:17 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP17.mp3" length="8889552" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-01-21-How Higgsfield turns simple ideas into cinematic social videos</guid>
+<itunes:duration>24:41</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP16 · 2026-01-22 | OpenAI 如何用 PostgreSQL 撑起八亿用户：一份极限优化工程复盘</title>
+<itunes:title>EP16 · 2026-01-22 | OpenAI 如何用 PostgreSQL 撑起八亿用户：一份极限优化工程复盘</itunes:title>
+<itunes:episode>16</itunes:episode>
+<description><![CDATA[OpenAI 在 2026 年初公开了一个让业界大吃一惊的工程细节：支撑八亿 ChatGPT 用户的数据库，核心仍然是一套没有分片的 PostgreSQL，一个主节点加将近五十个读副本，每秒处理数百万次查询。这期节目我们完整拆解这背后的九大挑战与解法，以及对你日常工程工作的实际启示。
+
+- 为什么单主 PostgreSQL 可以撑到八亿用户，以及他们为什么暂时不做分片
+- MVCC 写放大的坑和 OpenAI 把写密集型业务迁到 CosmosDB 的决策逻辑
+- 一个联查十二张表的查询如何多次引发 ChatGPT 全面故障，以及 ORM 的隐患
+- PgBouncer 如何把连接建立时间从五十毫秒压到五毫秒，防住连接风暴
+- 缓存锁机制如何把"一千次数据库查询"变成"一次查询"
+- 六条可以直接带走的工程实践，附带作者对"推迟复杂性"这一哲学的点评]]></description>
+<content:encoded><![CDATA[OpenAI 在 2026 年初公开了一个让业界大吃一惊的工程细节：支撑八亿 ChatGPT 用户的数据库，核心仍然是一套没有分片的 PostgreSQL，一个主节点加将近五十个读副本，每秒处理数百万次查询。这期节目我们完整拆解这背后的九大挑战与解法，以及对你日常工程工作的实际启示。<br/><br/>- 为什么单主 PostgreSQL 可以撑到八亿用户，以及他们为什么暂时不做分片<br/>- MVCC 写放大的坑和 OpenAI 把写密集型业务迁到 CosmosDB 的决策逻辑<br/>- 一个联查十二张表的查询如何多次引发 ChatGPT 全面故障，以及 ORM 的隐患<br/>- PgBouncer 如何把连接建立时间从五十毫秒压到五毫秒，防住连接风暴<br/>- 缓存锁机制如何把"一千次数据库查询"变成"一次查询"<br/>- 六条可以直接带走的工程实践，附带作者对"推迟复杂性"这一哲学的点评]]></content:encoded>
+<pubDate>Thu, 22 Jan 2026 08:00:16 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP16.mp3" length="9775440" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-01-22-Scaling PostgreSQL to power 800 million ChatGPT users</guid>
+<itunes:duration>27:09</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP15 · 2026-01-23 | OpenAI 首次公开：生产级 AI agent 循环的工程内幕</title>
+<itunes:title>EP15 · 2026-01-23 | OpenAI 首次公开：生产级 AI agent 循环的工程内幕</itunes:title>
+<itunes:episode>15</itunes:episode>
+<description><![CDATA[本期节目深度拆解 OpenAI 工程博客文章《Unrolling the Codex agent loop》，这是 Codex 团队首次系统性地公开构建世界级软件 agent 过程中积累的硬核工程经验。我们将从最基础的 agent 循环结构讲起，逐层深入到 prompt 构建、流式响应处理、prompt 缓存优化、以及上下文窗口管理策略，并结合实际工程场景给出可以直接上手的操作建议。
+
+- - Codex agent loop 的完整运转机制：从用户输入到最终响应的每一个环节
+- - Responses API 的 prompt 构建细节：instructions、tools 与 input 三字段的工程设计
+- - 为什么选择不用 previous_response_id：无状态设计与零数据留存合规的权衡
+- - Prompt caching 如何把推理成本从平方降到线性，以及 MCP 工具顺序不一致导致缓存失效的真实 bug
+- - /responses/compact 自动压缩接口如何解决上下文窗口管理难题
+- - 六条可直接应用于你自己 agent 项目的工程实践建议]]></description>
+<content:encoded><![CDATA[本期节目深度拆解 OpenAI 工程博客文章《Unrolling the Codex agent loop》，这是 Codex 团队首次系统性地公开构建世界级软件 agent 过程中积累的硬核工程经验。我们将从最基础的 agent 循环结构讲起，逐层深入到 prompt 构建、流式响应处理、prompt 缓存优化、以及上下文窗口管理策略，并结合实际工程场景给出可以直接上手的操作建议。<br/><br/>- - Codex agent loop 的完整运转机制：从用户输入到最终响应的每一个环节<br/>- - Responses API 的 prompt 构建细节：instructions、tools 与 input 三字段的工程设计<br/>- - 为什么选择不用 previous_response_id：无状态设计与零数据留存合规的权衡<br/>- - Prompt caching 如何把推理成本从平方降到线性，以及 MCP 工具顺序不一致导致缓存失效的真实 bug<br/>- - /responses/compact 自动压缩接口如何解决上下文窗口管理难题<br/>- - 六条可直接应用于你自己 agent 项目的工程实践建议]]></content:encoded>
+<pubDate>Fri, 23 Jan 2026 08:00:15 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP15.mp3" length="10613232" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-01-23-Unrolling the Codex agent loop</guid>
+<itunes:duration>29:28</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP14 · 2026-01-29 | OpenAI 内部数据 agent 全拆解：七层上下文如何让 AI 真正读懂企业数据</title>
+<itunes:title>EP14 · 2026-01-29 | OpenAI 内部数据 agent 全拆解：七层上下文如何让 AI 真正读懂企业数据</itunes:title>
+<itunes:episode>14</itunes:episode>
+<description><![CDATA[OpenAI 在内部用 GPT 五点二、Codex、Evals API 和 Embeddings API 构建了一个专属数据 agent，让三千五百名员工能用自然语言在几分钟内从六百拍字节、七万个数据集里得到可靠答案。本期节目拆解这个 agent 的七层上下文体系、自我纠错推理机制、黄金 SQL 评估方法，以及团队在构建过程中总结的三条关键工程教训。
+
+- 为什么元数据和文档不够：表的真正含义藏在生产它的管道代码里，而不是列名里
+- Codex 如何读懂数据管道代码，自动区分看起来相似但含义截然不同的表
+- 记忆系统专门用于积累"踩坑知识"，让 agent 从每次纠正中进化
+- 黄金 SQL + Evals API 评估方案：用模型判断结果等价性，而非字符串匹配
+- 工程教训：精简工具集、高层级指引优于步骤规定、代码胜过文档
+- 对工程师和数据团队的实践建议：从哪一层开始、如何避免常见陷阱]]></description>
+<content:encoded><![CDATA[OpenAI 在内部用 GPT 五点二、Codex、Evals API 和 Embeddings API 构建了一个专属数据 agent，让三千五百名员工能用自然语言在几分钟内从六百拍字节、七万个数据集里得到可靠答案。本期节目拆解这个 agent 的七层上下文体系、自我纠错推理机制、黄金 SQL 评估方法，以及团队在构建过程中总结的三条关键工程教训。<br/><br/>- 为什么元数据和文档不够：表的真正含义藏在生产它的管道代码里，而不是列名里<br/>- Codex 如何读懂数据管道代码，自动区分看起来相似但含义截然不同的表<br/>- 记忆系统专门用于积累"踩坑知识"，让 agent 从每次纠正中进化<br/>- 黄金 SQL + Evals API 评估方案：用模型判断结果等价性，而非字符串匹配<br/>- 工程教训：精简工具集、高层级指引优于步骤规定、代码胜过文档<br/>- 对工程师和数据团队的实践建议：从哪一层开始、如何避免常见陷阱]]></content:encoded>
+<pubDate>Thu, 29 Jan 2026 08:00:14 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP14.mp3" length="8862912" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-01-29-Inside OpenAI’s in-house data agent</guid>
+<itunes:duration>24:37</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP13 · 2026-02-04 | 解锁 Codex 执行框架：OpenAI 如何为 AI 编程智能体构建稳定集成协议</title>
+<itunes:title>EP13 · 2026-02-04 | 解锁 Codex 执行框架：OpenAI 如何为 AI 编程智能体构建稳定集成协议</itunes:title>
+<itunes:episode>13</itunes:episode>
+<description><![CDATA[本期我们深度拆解 OpenAI 工程博客上的一篇技术文章，讲 OpenAI 是如何为 Codex——他们的 AI 编程智能体——构建 App Server 这套统一中间层的。从最初为 VS Code 插件临时搭的 JSON-RPC 桥，到如今支撑网页端、桌面端、IDE 插件和命令行的稳定平台级协议，背后有一套值得所有 AI 应用工程师借鉴的架构思路。
+
+- - 文章来自 OpenAI 技术人员 Celia Chen，发表于二〇二六年二月，彼时 AI 编程智能体正进入大规模商业落地阶段
+- - Codex harness 是什么：包含智能体循环、线程持久化、配置认证、工具沙箱执行的完整引擎
+- - App Server 的三个核心协议原语：Item（原子输入输出单元）、Turn（单次智能体工作单元）、Thread（持久会话容器）
+- - 双向 JSON-RPC over stdio 的设计哲学：为何不用 HTTP，以及向后兼容如何让 Xcode 这样的合作伙伴解耦发版周期
+- - 五种集成方式横向比较：MCP 服务器、通用智能体协议、App Server、CLI 自动化、TypeScript SDK，各自的适用场景和权衡
+- - 对听众的实践启示：如何快速上手 App Server 集成，三个最容易踩的坑，以及远程执行能力的长远意义]]></description>
+<content:encoded><![CDATA[本期我们深度拆解 OpenAI 工程博客上的一篇技术文章，讲 OpenAI 是如何为 Codex——他们的 AI 编程智能体——构建 App Server 这套统一中间层的。从最初为 VS Code 插件临时搭的 JSON-RPC 桥，到如今支撑网页端、桌面端、IDE 插件和命令行的稳定平台级协议，背后有一套值得所有 AI 应用工程师借鉴的架构思路。<br/><br/>- - 文章来自 OpenAI 技术人员 Celia Chen，发表于二〇二六年二月，彼时 AI 编程智能体正进入大规模商业落地阶段<br/>- - Codex harness 是什么：包含智能体循环、线程持久化、配置认证、工具沙箱执行的完整引擎<br/>- - App Server 的三个核心协议原语：Item（原子输入输出单元）、Turn（单次智能体工作单元）、Thread（持久会话容器）<br/>- - 双向 JSON-RPC over stdio 的设计哲学：为何不用 HTTP，以及向后兼容如何让 Xcode 这样的合作伙伴解耦发版周期<br/>- - 五种集成方式横向比较：MCP 服务器、通用智能体协议、App Server、CLI 自动化、TypeScript SDK，各自的适用场景和权衡<br/>- - 对听众的实践启示：如何快速上手 App Server 集成，三个最容易踩的坑，以及远程执行能力的长远意义]]></content:encoded>
+<pubDate>Wed, 04 Feb 2026 08:00:13 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP13.mp3" length="10201392" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-02-04-Unlocking the Codex harness - how we built the App Server</guid>
+<itunes:duration>28:20</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP12 · 2026-02-11 | 零行手写代码、百万行产品：OpenAI 的 Agent 工程方法论</title>
+<itunes:title>EP12 · 2026-02-11 | 零行手写代码、百万行产品：OpenAI 的 Agent 工程方法论</itunes:title>
+<itunes:episode>12</itunes:episode>
+<description><![CDATA[OpenAI 内部工程团队在五个月内，带着"零行手写代码"的极端约束，用 Codex agent 构建出了一款拥有真实日常用户的产品，仓库规模达到大约一百万行代码。这篇文章总结了他们在这个过程中积累的工程方法论——如何设计文档结构、如何用架构约束驯服 agent、如何让 agent 自己做质量验证。如果你正在认真思考如何在团队里落地 AI 驱动开发，而不只是把它当代码补全工具，这是目前为止最有操作价值的一手工程经验之一。
+
+- 核心哲学：人类掌舵，Agent 执行——工程师的产出从写代码变成了设计环境、表达意图、构建反馈循环
+- 文档设计：AGENTS.md 应该是目录而非百科全书，用"渐进式披露"管理 agent 的稀缺 context
+- 架构约束：刚性的分层依赖规则不是负担，是 agent 高速工作而不产生混乱的基础设施
+- 可观测性：把日志、指标、UI 直接暴露给 agent，让它用真实运行时行为来验证自己的改动
+- 持续清理：用定期运行的后台 agent 做代码"垃圾回收"，把团队的黄金原则机械化后持续强制执行
+- 全流程自动化：从复现 bug 到合并 PR，单次 Codex 运行已经可以端到端完成完整的软件交付流程]]></description>
+<content:encoded><![CDATA[OpenAI 内部工程团队在五个月内，带着"零行手写代码"的极端约束，用 Codex agent 构建出了一款拥有真实日常用户的产品，仓库规模达到大约一百万行代码。这篇文章总结了他们在这个过程中积累的工程方法论——如何设计文档结构、如何用架构约束驯服 agent、如何让 agent 自己做质量验证。如果你正在认真思考如何在团队里落地 AI 驱动开发，而不只是把它当代码补全工具，这是目前为止最有操作价值的一手工程经验之一。<br/><br/>- 核心哲学：人类掌舵，Agent 执行——工程师的产出从写代码变成了设计环境、表达意图、构建反馈循环<br/>- 文档设计：AGENTS.md 应该是目录而非百科全书，用"渐进式披露"管理 agent 的稀缺 context<br/>- 架构约束：刚性的分层依赖规则不是负担，是 agent 高速工作而不产生混乱的基础设施<br/>- 可观测性：把日志、指标、UI 直接暴露给 agent，让它用真实运行时行为来验证自己的改动<br/>- 持续清理：用定期运行的后台 agent 做代码"垃圾回收"，把团队的黄金原则机械化后持续强制执行<br/>- 全流程自动化：从复现 bug 到合并 PR，单次 Codex 运行已经可以端到端完成完整的软件交付流程]]></content:encoded>
+<pubDate>Wed, 11 Feb 2026 08:00:12 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP12.mp3" length="9691344" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-02-11-Harness engineering - leveraging Codex in an agent-first world</guid>
+<itunes:duration>26:55</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP11 · 2026-02-13 | 决策瀑布：OpenAI 如何让 Codex 和 Sora 永不断流</title>
+<itunes:title>EP11 · 2026-02-13 | 决策瀑布：OpenAI 如何让 Codex 和 Sora 永不断流</itunes:title>
+<itunes:episode>11</itunes:episode>
+<description><![CDATA[本期我们深读 OpenAI 工程团队发表的技术文章《Beyond rate limits: scaling access to Codex and Sora》，作者 Jonah Cohen 详细拆解了 OpenAI 为何放弃传统速率限制和纯按量计费方案，转而自建一套实时混合访问控制系统，并深入讲解了其中的"决策瀑布"模型、三层数据集架构与可证明正确的计费哲学。这篇文章对所有在构建 AI 产品、后端计费或用量管理系统的工程师都有极高参考价值。
+
+- 速率限制与按量计费各有缺陷，OpenAI 选择自建混合系统
+- "决策瀑布"模型：把访问控制从二元判断变为多层顺序扣减
+- 为何放弃第三方计量平台：实时性要求与深度可观察性缺一不可
+- 三层独立数据集：用量事件、计费事件、余额更新，支撑可证明的计费正确性
+- 幂等键与原子事务是分布式计费系统的基础安全阀
+- 同步决策加异步结算，超支时自动退款，用户信任优于严格执行]]></description>
+<content:encoded><![CDATA[本期我们深读 OpenAI 工程团队发表的技术文章《Beyond rate limits: scaling access to Codex and Sora》，作者 Jonah Cohen 详细拆解了 OpenAI 为何放弃传统速率限制和纯按量计费方案，转而自建一套实时混合访问控制系统，并深入讲解了其中的"决策瀑布"模型、三层数据集架构与可证明正确的计费哲学。这篇文章对所有在构建 AI 产品、后端计费或用量管理系统的工程师都有极高参考价值。<br/><br/>- 速率限制与按量计费各有缺陷，OpenAI 选择自建混合系统<br/>- "决策瀑布"模型：把访问控制从二元判断变为多层顺序扣减<br/>- 为何放弃第三方计量平台：实时性要求与深度可观察性缺一不可<br/>- 三层独立数据集：用量事件、计费事件、余额更新，支撑可证明的计费正确性<br/>- 幂等键与原子事务是分布式计费系统的基础安全阀<br/>- 同步决策加异步结算，超支时自动退款，用户信任优于严格执行]]></content:encoded>
+<pubDate>Fri, 13 Feb 2026 08:00:11 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP11.mp3" length="9135936" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-02-13-Beyond rate limits - scaling access to Codex and Sora</guid>
+<itunes:duration>25:22</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP10 · 2026-04-22 | WebSocket 让 AI 智能体提速四成：OpenAI Responses API 的架构演进实录</title>
+<itunes:title>EP10 · 2026-04-22 | WebSocket 让 AI 智能体提速四成：OpenAI Responses API 的架构演进实录</itunes:title>
+<itunes:episode>10</itunes:episode>
+<description><![CDATA[本期我们深度拆解一篇来自 OpenAI 工程团队的技术博文，聊聊他们如何通过引入 WebSocket 持久连接，把智能体工作流的端到端延迟砍掉了整整四成。这背后不是简单地"换个协议"，而是一次从架构层面重新思考 AI API 设计的工程实践。
+
+- WebSocket 如何解决 HTTP 模式下每次请求都要重处理完整对话历史的冗余问题
+- 为什么推理速度从每秒 65 个 token 提升到近 1000 个 token 之后，API 开销突然成了新瓶颈
+- OpenAI 的原型版本 vs 生产版本：技术最优解和开发者友好性之间如何取舍
+- 连接级内存缓存缓存了什么，为什么能让安全分类器和 tokenization 都变快
+- Vercel、Cline、Cursor 的真实生产数据：最高 40% 的延迟下降意味着什么
+- 开发者迁移 WebSocket 模式需要注意哪些坑：重连逻辑、状态依赖、连接复用边界]]></description>
+<content:encoded><![CDATA[本期我们深度拆解一篇来自 OpenAI 工程团队的技术博文，聊聊他们如何通过引入 WebSocket 持久连接，把智能体工作流的端到端延迟砍掉了整整四成。这背后不是简单地"换个协议"，而是一次从架构层面重新思考 AI API 设计的工程实践。<br/><br/>- WebSocket 如何解决 HTTP 模式下每次请求都要重处理完整对话历史的冗余问题<br/>- 为什么推理速度从每秒 65 个 token 提升到近 1000 个 token 之后，API 开销突然成了新瓶颈<br/>- OpenAI 的原型版本 vs 生产版本：技术最优解和开发者友好性之间如何取舍<br/>- 连接级内存缓存缓存了什么，为什么能让安全分类器和 tokenization 都变快<br/>- Vercel、Cline、Cursor 的真实生产数据：最高 40% 的延迟下降意味着什么<br/>- 开发者迁移 WebSocket 模式需要注意哪些坑：重连逻辑、状态依赖、连接复用边界]]></content:encoded>
+<pubDate>Wed, 22 Apr 2026 08:00:10 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP10.mp3" length="10983744" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-04-22-Speeding up agentic workflows with WebSockets in the Responses API</guid>
+<itunes:duration>30:30</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP9 · 2026-04-27 | 把工单变成指挥中心：OpenAI 用一份规范文档让 coding agent 自主运转</title>
+<itunes:title>EP9 · 2026-04-27 | 把工单变成指挥中心：OpenAI 用一份规范文档让 coding agent 自主运转</itunes:title>
+<itunes:episode>9</itunes:episode>
+<description><![CDATA[本期聊的是 OpenAI 工程团队于二零二六年四月发布的一篇实战总结：他们如何构建了一个叫 Symphony 的 agent 编排系统，把 Linear 这样的项目管理工具变成了 coding agent 的调度大脑，让某些团队的 PR 合并量在三周内增长了五倍。更出人意料的是，Symphony 的核心不是一套复杂框架，而是一个叫做 SPEC.md 的 Markdown 规范文档。
+
+- 为什么工程师管理 coding agent 会撞上"注意力天花板"，三到五个会话是临界点
+- Symphony 的核心设计：让 issue tracker 变成 agent 的状态机，彻底解耦"任务"和"会话"
+- DAG 并行执行：agent 如何根据依赖关系自动排队开工，以 React 升级依赖 Vite 迁移为例
+- SPEC.md 哲学：为什么一份写得好的规范文档，比一套复杂框架更有生命力
+- Codex App Server 无界面模式：JSON-RPC 接口让 agent 编排真正可编程
+- 实践指南：上手 Symphony 需要哪些基础设施、什么任务适合委托、review 文化怎么调整]]></description>
+<content:encoded><![CDATA[本期聊的是 OpenAI 工程团队于二零二六年四月发布的一篇实战总结：他们如何构建了一个叫 Symphony 的 agent 编排系统，把 Linear 这样的项目管理工具变成了 coding agent 的调度大脑，让某些团队的 PR 合并量在三周内增长了五倍。更出人意料的是，Symphony 的核心不是一套复杂框架，而是一个叫做 SPEC.md 的 Markdown 规范文档。<br/><br/>- 为什么工程师管理 coding agent 会撞上"注意力天花板"，三到五个会话是临界点<br/>- Symphony 的核心设计：让 issue tracker 变成 agent 的状态机，彻底解耦"任务"和"会话"<br/>- DAG 并行执行：agent 如何根据依赖关系自动排队开工，以 React 升级依赖 Vite 迁移为例<br/>- SPEC.md 哲学：为什么一份写得好的规范文档，比一套复杂框架更有生命力<br/>- Codex App Server 无界面模式：JSON-RPC 接口让 agent 编排真正可编程<br/>- 实践指南：上手 Symphony 需要哪些基础设施、什么任务适合委托、review 文化怎么调整]]></content:encoded>
+<pubDate>Mon, 27 Apr 2026 08:00:09 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP9.mp3" length="7891488" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-04-27-An open-source spec for orchestration - Symphony</guid>
+<itunes:duration>21:55</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP8 · 2026-05-04 | 九亿用户背后的低延迟秘密：OpenAI 实时语音 AI 架构深度解析</title>
+<itunes:title>EP8 · 2026-05-04 | 九亿用户背后的低延迟秘密：OpenAI 实时语音 AI 架构深度解析</itunes:title>
+<itunes:episode>8</itunes:episode>
+<description><![CDATA[本期我们深度解析 OpenAI 工程博客上一篇关于实时语音 AI 基础架构的文章，作者是 OpenAI 技术团队的 Yi Zhang 和 William McDonald。文章揭示了 OpenAI 如何在九亿周活跃用户的规模下，用一套精心设计的 WebRTC 分层架构，让语音对话感觉自然流畅、毫无卡顿。
+
+**本期要点**
+
+- 为什么语音 AI 对延迟如此敏感，几百毫秒的差距如何决定对话是否自然
+- WebRTC 协议栈解析：ICE、DTLS、SRTP、codec 协商各自解决什么问题
+- 传统 one-port-per-session 模式为何在 Kubernetes 大规模场景下彻底失效
+- relay 加 transceiver 分层架构的核心设计：如何用轻量转发层分担有状态终结层的压力
+- ICE ufrag 编码路由元数据的精妙设计：第一个数据包如何在零外部查询的情况下准确路由
+- Go 实现的性能调优：SO_REUSEPORT、线程绑定、预分配缓冲区，以及为何不需要内核旁路]]></description>
+<content:encoded><![CDATA[本期我们深度解析 OpenAI 工程博客上一篇关于实时语音 AI 基础架构的文章，作者是 OpenAI 技术团队的 Yi Zhang 和 William McDonald。文章揭示了 OpenAI 如何在九亿周活跃用户的规模下，用一套精心设计的 WebRTC 分层架构，让语音对话感觉自然流畅、毫无卡顿。<br/><br/>**本期要点**<br/><br/>- 为什么语音 AI 对延迟如此敏感，几百毫秒的差距如何决定对话是否自然<br/>- WebRTC 协议栈解析：ICE、DTLS、SRTP、codec 协商各自解决什么问题<br/>- 传统 one-port-per-session 模式为何在 Kubernetes 大规模场景下彻底失效<br/>- relay 加 transceiver 分层架构的核心设计：如何用轻量转发层分担有状态终结层的压力<br/>- ICE ufrag 编码路由元数据的精妙设计：第一个数据包如何在零外部查询的情况下准确路由<br/>- Go 实现的性能调优：SO_REUSEPORT、线程绑定、预分配缓冲区，以及为何不需要内核旁路]]></content:encoded>
+<pubDate>Mon, 04 May 2026 08:00:08 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP8.mp3" length="10563120" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-05-04-How OpenAI delivers low-latency voice AI at scale</guid>
+<itunes:duration>29:20</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP7 · 2026-05-05 | 告别训练崩溃：OpenAI MRC 如何让超算网络故障变成背景噪音</title>
+<itunes:title>EP7 · 2026-05-05 | 告别训练崩溃：OpenAI MRC 如何让超算网络故障变成背景噪音</itunes:title>
+<itunes:episode>7</itunes:episode>
+<description><![CDATA[本期解析 OpenAI 在二〇二六年五月联合 AMD、Broadcom、Intel、微软和英伟达共同发布的超算网络协议 MRC（Multipath Reliable Connection，多路径可靠连接）。这套协议从拓扑设计、数据传输和路由控制三个维度，彻底解决了十万卡级别 AI 训练集群的网络拥塞和故障问题，并已通过开放计算项目向全行业开源。
+
+- MRC 的诞生背景：十几万张 GPU 同步训练时，单次链路故障如何被"放大"成整个训练任务崩溃
+- 多平面拓扑：把一个八百吉比特网卡接口拆成八个独立平面，两层交换机连通十三万张 GPU
+- 自适应数据包喷洒：打破"一条流走一条路"的传统限制，将数据包散射到数百条路径
+- 数据包裁剪：区分拥塞导致的丢包与路径故障，避免误判误停正常路径
+- SRv6 静态源路由：完全禁用 BGP 动态路由协议，消除整类动态路由故障
+- 实战效果：每分钟多次链路抖动不影响训练，重启四台核心交换机无需通知训练团队]]></description>
+<content:encoded><![CDATA[本期解析 OpenAI 在二〇二六年五月联合 AMD、Broadcom、Intel、微软和英伟达共同发布的超算网络协议 MRC（Multipath Reliable Connection，多路径可靠连接）。这套协议从拓扑设计、数据传输和路由控制三个维度，彻底解决了十万卡级别 AI 训练集群的网络拥塞和故障问题，并已通过开放计算项目向全行业开源。<br/><br/>- MRC 的诞生背景：十几万张 GPU 同步训练时，单次链路故障如何被"放大"成整个训练任务崩溃<br/>- 多平面拓扑：把一个八百吉比特网卡接口拆成八个独立平面，两层交换机连通十三万张 GPU<br/>- 自适应数据包喷洒：打破"一条流走一条路"的传统限制，将数据包散射到数百条路径<br/>- 数据包裁剪：区分拥塞导致的丢包与路径故障，避免误判误停正常路径<br/>- SRv6 静态源路由：完全禁用 BGP 动态路由协议，消除整类动态路由故障<br/>- 实战效果：每分钟多次链路抖动不影响训练，重启四台核心交换机无需通知训练团队]]></content:encoded>
+<pubDate>Tue, 05 May 2026 08:00:07 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP7.mp3" length="10119744" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-05-05-Unlocking large scale AI training networks with MRC (Multipath Reliable Connection)</guid>
+<itunes:duration>28:06</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP6 · 2026-05-13 | 给 AI 编程 Agent 造一把安全锁：Codex Windows 沙盒设计全记录</title>
+<itunes:title>EP6 · 2026-05-13 | 给 AI 编程 Agent 造一把安全锁：Codex Windows 沙盒设计全记录</itunes:title>
+<itunes:episode>6</itunes:episode>
+<description><![CDATA[OpenAI 工程师 David Wiesen 详细记录了他如何在 Windows 上从零为 Codex 编程 agent 构建沙盒机制。文章坦诚地展示了多条死路以及最终四层架构的形成过程，是难得的真实工程决策记录。
+
+- Codex 在 Mac/Linux 上有成熟沙盒，但 Windows 既无 Seatbelt 也无 seccomp，三种现有方案（AppContainer、Windows Sandbox、强制完整性控制）各有根本性缺陷
+- 第一版无需提权的原型：合成 SID + 写受限令牌精细控制文件写入；用代理环境变量"劝阻"网络，但本质上可被绕过
+- 第二版高级沙盒：创建两个专属 Windows 系统用户，配合防火墙规则实现真正的网络硬隔离
+- Windows 权限壁垒（CreateProcessAsUserW）催生了 codex-command-runner.exe，专门负责在正确边界内铸造受限令牌并启动子进程
+- 最终架构分四层：主程序、提权安装程序、命令运行器、受限子进程，各司其职互不越界
+- 核心教训：agent 安全和传统应用安全需求不同；网络隔离必须做到操作系统层，环境变量只是劝阻而非强制]]></description>
+<content:encoded><![CDATA[OpenAI 工程师 David Wiesen 详细记录了他如何在 Windows 上从零为 Codex 编程 agent 构建沙盒机制。文章坦诚地展示了多条死路以及最终四层架构的形成过程，是难得的真实工程决策记录。<br/><br/>- Codex 在 Mac/Linux 上有成熟沙盒，但 Windows 既无 Seatbelt 也无 seccomp，三种现有方案（AppContainer、Windows Sandbox、强制完整性控制）各有根本性缺陷<br/>- 第一版无需提权的原型：合成 SID + 写受限令牌精细控制文件写入；用代理环境变量"劝阻"网络，但本质上可被绕过<br/>- 第二版高级沙盒：创建两个专属 Windows 系统用户，配合防火墙规则实现真正的网络硬隔离<br/>- Windows 权限壁垒（CreateProcessAsUserW）催生了 codex-command-runner.exe，专门负责在正确边界内铸造受限令牌并启动子进程<br/>- 最终架构分四层：主程序、提权安装程序、命令运行器、受限子进程，各司其职互不越界<br/>- 核心教训：agent 安全和传统应用安全需求不同；网络隔离必须做到操作系统层，环境变量只是劝阻而非强制]]></content:encoded>
+<pubDate>Wed, 13 May 2026 08:00:06 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP6.mp3" length="8979552" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-05-13-Building a safe, effective sandbox to enable Codex on Windows</guid>
+<itunes:duration>24:56</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
 <item>
 <title>EP5 · 2026-05-27 | 让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解</title>
 <itunes:title>EP5 · 2026-05-27 | 让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解</itunes:title>
