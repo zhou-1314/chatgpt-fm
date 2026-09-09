@@ -6,7 +6,7 @@
 
 用碎片时间听懂最前沿的 AI
 
-![episodes](https://img.shields.io/badge/已更新-5%20集-1DB954)
+![episodes](https://img.shields.io/badge/已更新-21%20集-1DB954)
 ![update](https://img.shields.io/badge/更新频率-每周日-FF8800)
 ![language](https://img.shields.io/badge/语言-简体中文-blue)
 
@@ -39,12 +39,12 @@ AI 技术演进的时间线。通勤、健身、做家务的时候听一听就�
 
 | 来源 | 集数 | 内容 |
 |---|:---:|---|
-| 🛠️ Engineering | 5 | 工程实践（Codex、harness、基础设施…） |
+| 🛠️ Engineering | 21 | 工程实践（Codex、harness、基础设施…） |
 | 🔬 Research | 0 | 研究与论文（推理、评测、可解释性…） |
 | 🚀 Product | 0 | 模型与产品发布（GPT 系列、API、ChatGPT…） |
 | 🛡️ Safety | 0 | 安全与对齐（Preparedness、威胁情报…） |
 | 📰 News 周报 | 0 | 「一周快讯」，速览每周官方动态 |
-| | **5 集** | 每周日更新 |
+| | **21 集** | 每周日更新 |
 
 前四个源逐篇做深度解读；news 类内容（公司动态、政策、客户故事）多为公告，
 按周聚合成几分钟的「一周快讯」。
@@ -58,10 +58,13 @@ AI 技术演进的时间线。通勤、健身、做家务的时候听一听就�
 - 🛠️ `EP3` · 2026-07-29 · [让模型优化模型：GPT 五点六如何同时拿下前沿智能与前沿效率](content/openai/engineering/scripts/2026-07-29-How%20GPT-5.6%20fuses%20frontier%20intelligence%20with%20frontier%20efficiency.md)
 - 🛠️ `EP4` · 2026-06-30 · [两个不可能的 Bug：OpenAI 如何用流行病学思维破解神秘崩溃](content/openai/engineering/scripts/2026-06-30-Core%20dump%20epidemiology%20-%20fixing%20an%2018-year-old%20bug.md)
 - 🛠️ `EP5` · 2026-05-27 · [让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解](content/openai/engineering/scripts/2026-05-27-Building%20self-improving%20tax%20agents%20with%20Codex.md)
+- 🛠️ `EP6` · 2026-05-13 · [给 AI 编程 Agent 造一把安全锁：Codex Windows 沙盒设计全记录](content/openai/engineering/scripts/2026-05-13-Building%20a%20safe%2C%20effective%20sandbox%20to%20enable%20Codex%20on%20Windows.md)
+- 🛠️ `EP7` · 2026-05-05 · [告别训练崩溃：OpenAI MRC 如何让超算网络故障变成背景噪音](content/openai/engineering/scripts/2026-05-05-Unlocking%20large%20scale%20AI%20training%20networks%20with%20MRC%20%28Multipath%20Reliable%20Connection%29.md)
+- 🛠️ `EP8` · 2026-05-04 · [九亿用户背后的低延迟秘密：OpenAI 实时语音 AI 架构深度解析](content/openai/engineering/scripts/2026-05-04-How%20OpenAI%20delivers%20low-latency%20voice%20AI%20at%20scale.md)
 
 <!-- LATEST:END -->
 
-📋 **完整 5 集目录（可点开每集文字稿）** 👉 **[CATALOG.md](CATALOG.md)**
+📋 **完整 21 集目录（可点开每集文字稿）** 👉 **[CATALOG.md](CATALOG.md)**
 
 ## 📖 也可以直接读文字版
 

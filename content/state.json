@@ -1,5 +1,5 @@
 {
-  "next_episode": 6,
+  "next_episode": 23,
   "articles": {
     "https://openai.com/index/jalapeno-first-results": {
       "stages": {
@@ -18,12 +18,18 @@
     },
     "https://openai.com/index/harness-engineering": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "engineering",
       "slug": "2026-02-11-Harness engineering - leveraging Codex in an agent-first world",
       "title": "Harness engineering: leveraging Codex in an agent-first world",
-      "published": "2026-02-11"
+      "published": "2026-02-11",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1615.2,
+      "episode": 12
     },
     "https://openai.com/index/continuous-voice-interaction-with-gpt-live": {
       "stages": {
@@ -87,13 +93,253 @@
     },
     "https://openai.com/index/building-codex-windows-sandbox": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "engineering",
       "slug": "2026-05-13-Building a safe, effective sandbox to enable Codex on Windows",
       "title": "Building a safe, effective sandbox to enable Codex on Windows",
-      "published": "2026-05-13"
+      "published": "2026-05-13",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1496.6,
+      "episode": 6
+    },
+    "https://openai.com/index/mrc-supercomputer-networking": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-05-05-Unlocking large scale AI training networks with MRC (Multipath Reliable Connection)",
+      "title": "Unlocking large scale AI training networks with MRC (Multipath Reliable Connection)",
+      "published": "2026-05-05",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1686.6,
+      "episode": 7
+    },
+    "https://openai.com/index/delivering-low-latency-voice-ai-at-scale": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-05-04-How OpenAI delivers low-latency voice AI at scale",
+      "title": "How OpenAI delivers low-latency voice AI at scale",
+      "published": "2026-05-04",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1760.5,
+      "episode": 8
+    },
+    "https://openai.com/index/open-source-codex-orchestration-symphony": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-04-27-An open-source spec for orchestration - Symphony",
+      "title": "An open-source spec for orchestration: Symphony",
+      "published": "2026-04-27",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1315.2,
+      "episode": 9
+    },
+    "https://openai.com/index/speeding-up-agentic-workflows-with-websockets": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-04-22-Speeding up agentic workflows with WebSockets in the Responses API",
+      "title": "Speeding up agentic workflows with WebSockets in the Responses API",
+      "published": "2026-04-22",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1830.6,
+      "episode": 10
+    },
+    "https://openai.com/index/equip-responses-api-computer-environment": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-03-11-From model to agent - Equipping the Responses API with a computer environment",
+      "title": "From model to agent: Equipping the Responses API with a computer environment",
+      "published": "2026-03-11",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1526.1,
+      "episode": 22
+    },
+    "https://openai.com/index/beyond-rate-limits": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-02-13-Beyond rate limits - scaling access to Codex and Sora",
+      "title": "Beyond rate limits: scaling access to Codex and Sora",
+      "published": "2026-02-13",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1522.7,
+      "episode": 11
+    },
+    "https://openai.com/index/unlocking-the-codex-harness": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-02-04-Unlocking the Codex harness - how we built the App Server",
+      "title": "Unlocking the Codex harness: how we built the App Server",
+      "published": "2026-02-04",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1700.2,
+      "episode": 13
+    },
+    "https://openai.com/index/inside-our-in-house-data-agent": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-01-29-Inside OpenAI’s in-house data agent",
+      "title": "Inside OpenAI’s in-house data agent",
+      "published": "2026-01-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1477.2,
+      "episode": 14
+    },
+    "https://openai.com/index/unrolling-the-codex-agent-loop": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-01-23-Unrolling the Codex agent loop",
+      "title": "Unrolling the Codex agent loop",
+      "published": "2026-01-23",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1768.9,
+      "episode": 15
+    },
+    "https://openai.com/index/scaling-postgresql": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-01-22-Scaling PostgreSQL to power 800 million ChatGPT users",
+      "title": "Scaling PostgreSQL to power 800 million ChatGPT users",
+      "published": "2026-01-22",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1629.2,
+      "episode": 16
+    },
+    "https://openai.com/index/higgsfield": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-01-21-How Higgsfield turns simple ideas into cinematic social videos",
+      "title": "How Higgsfield turns simple ideas into cinematic social videos",
+      "published": "2026-01-21",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1481.6,
+      "episode": 17
+    },
+    "https://openai.com/index/shipping-sora-for-android-with-codex": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-12-12-How We Used Codex to Ship Sora for Android in 28 Days",
+      "title": "How We Used Codex to Ship Sora for Android in 28 Days",
+      "published": "2025-12-12",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1388.0,
+      "episode": 18
+    },
+    "https://openai.com/index/cred-swamy-seetharaman": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-11-05-How CRED is tapping AI to deliver premium customer experiences",
+      "title": "How CRED is tapping AI to deliver premium customer experiences",
+      "published": "2025-11-05",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1405.2,
+      "episode": 19
+    },
+    "https://openai.com/index/building-chatgpt-atlas": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-10-30-How we built OWL, the new architecture behind our ChatGPT-based browser, Atlas",
+      "title": "How we built OWL, the new architecture behind our ChatGPT-based browser, Atlas",
+      "published": "2025-10-30",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1647.7,
+      "episode": 20
+    },
+    "https://openai.com/index/openai-contract-data-agent": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-09-29-Turning contracts into searchable data at OpenAI",
+      "title": "Turning contracts into searchable data at OpenAI",
+      "published": "2025-09-29",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1625.8,
+      "episode": 21
+    },
+    "https://openai.com/index/openai-inbound-sales-assistant": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2025-09-29-Converting inbound leads into customers at OpenAI",
+      "title": "Converting inbound leads into customers at OpenAI",
+      "published": "2025-09-29"
     }
   },
-  "voice_rotation": 5
+  "voice_rotation": 22
 }
