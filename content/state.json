@@ -1,5 +1,5 @@
 {
-  "next_episode": 28,
+  "next_episode": 33,
   "articles": {
     "https://openai.com/index/jalapeno-first-results": {
       "stages": {
@@ -404,8 +404,7 @@
       "published": "2025-08-07",
       "voice": "zh-CN-YunxiNeural",
       "duration_sec": 1316.1,
-      "episode": 27,
-      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-coding-design"
+      "episode": 27
     },
     "https://openai.com/index/gpt-5-amgen": {
       "stages": {
@@ -414,19 +413,92 @@
       "source": "engineering",
       "slug": "2025-08-07-How Amgen uses GPT-5",
       "title": "How Amgen uses GPT-5",
-      "published": "2025-08-07",
-      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-amgen"
+      "published": "2025-08-07"
     },
     "https://openai.com/index/gpt-5-cursor": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "engineering",
       "slug": "2025-08-07-How Cursor uses GPT-5",
       "title": "How Cursor uses GPT-5",
       "published": "2025-08-07",
-      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-cursor"
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1423.6,
+      "episode": 28
+    },
+    "https://openai.com/index/model-ml-chaz-englander": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-07-23-Model ML is helping financial firms rebuild with AI from the ground up",
+      "title": "Model ML is helping financial firms rebuild with AI from the ground up",
+      "published": "2025-07-23",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1433.0,
+      "episode": 29
+    },
+    "https://openai.com/index/unify": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-06-24-Driving scalable growth with OpenAI o3, GPT-4.1, and CUA",
+      "title": "Driving scalable growth with OpenAI o3, GPT-4.1, and CUA",
+      "published": "2025-06-24",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1444.0,
+      "episode": 30
+    },
+    "https://openai.com/index/john-deere-justin-rose": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-05-06-AI helps John Deere transform agriculture",
+      "title": "AI helps John Deere transform agriculture",
+      "published": "2025-05-06",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1694.1,
+      "episode": 31
+    },
+    "https://openai.com/index/speak-connor-zwick": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2025-04-22-Speak is personalizing language learning with AI",
+      "title": "Speak is personalizing language learning with AI",
+      "published": "2025-04-22",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1471.9,
+      "episode": 32
+    },
+    "https://openai.com/index/navier-stokes-solution": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "research",
+      "slug": "2026-09-08-On the Navier–Stokes Millennium Prize Problem",
+      "title": "On the Navier–Stokes Millennium Prize Problem",
+      "published": "2026-09-08"
     }
   },
-  "voice_rotation": 27
+  "voice_rotation": 32
 }

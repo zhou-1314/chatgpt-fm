@@ -248,3 +248,41 @@ class TestNoBodySkip(unittest.TestCase):
         with mock.patch.object(cli.sources, "discover_all", return_value=refs):
             got = cli._collect_refs(st, source="engineering")
         self.assertEqual([r.url for r in got], ["https://openai.com/index/good"])
+
+
+class TestStateAtomicWrite(unittest.TestCase):
+    """进度文件写到一半被打断（限额中断、Ctrl-C、OOM）会毁掉几百集的记录。"""
+
+    def test_no_temp_file_left_behind(self):
+        from chatgpt_fm import state
+        with TempRoot():
+            state.save({"next_episode": 1, "articles": {}})
+            self.assertTrue(config.STATE_FILE.exists())
+            self.assertFalse(config.STATE_FILE.with_suffix(".json.tmp").exists())
+
+    def test_existing_state_survives_a_failed_write(self):
+        from chatgpt_fm import state
+        with TempRoot():
+            state.save({"next_episode": 7, "articles": {"u": {"stages": {}}}})
+            # 模拟写临时文件时炸掉：原文件必须保持完好，而不是被截断
+            with mock.patch.object(Path, "write_text", side_effect=OSError("disk full")):
+                with self.assertRaises(OSError):
+                    state.save({"next_episode": 99, "articles": {}})
+            self.assertEqual(state.load()["next_episode"], 7)
+
+
+class TestAlreadyFetchedShellPage(unittest.TestCase):
+    """正文校验上线前落盘的壳页，抓取那步会被跳过，得在解读前再拦一次。"""
+
+    def test_fetched_shell_page_is_skipped_before_the_model_call(self):
+        from chatgpt_fm import cli, sources
+        ref = sources.ArticleRef(url="https://openai.com/index/shell", source="engineering")
+        st = {"articles": {ref.url: {"stages": {"fetched": True}, "slug": "s", "title": "t"}}}
+        nav = "Skip to main content\nResearch\nProducts\nLog in\nShare"
+        with mock.patch.object(cli.fetch, "read_with_frontmatter", return_value=({}, nav)), \
+             mock.patch.object(cli.state, "save"), \
+             mock.patch.object(cli.interpret, "interpret") as interp:
+            done = cli._pipeline_one(ref, st)
+        self.assertFalse(done)
+        interp.assert_not_called()            # 关键：没有白花一次模型调用
+        self.assertIn("skipped", st["articles"][ref.url])

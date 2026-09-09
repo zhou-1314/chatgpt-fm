@@ -146,5 +146,10 @@ chatgpt-fm run --source engineering --limit 1   # 跑通一整篇（这步会真
   （响应头里能看到 `x-cache: HIT` 和很大的 `age`）。
   `gh api -X POST repos/<owner>/<repo>/pages/builds` 触发一次重建即可。
 
+- **别在流水线跑着的时候手改 `content/state.json`**：autorun 全程持有 state 的
+  内存副本，它下一次 save 会把整个字典写回，你手上的修改会被静默抹掉。
+  实测标了 3 篇 skipped，几分钟后全没了。要改就先停流水线。
+  同理，不要并发跑两个 autorun——后 save 的那个会覆盖另一个的进度。
+
 - **集数显示不对**：`weekly` 和 `publish` 都会自动刷新 CATALOG.md 与 README 进度。
   只跑了 `autorun` 的话进度不会动，手动补一条 `chatgpt-fm catalog` 即可。

@@ -25,10 +25,20 @@ def load() -> dict[str, Any]:
 
 
 def save(state: dict[str, Any]) -> None:
+    """原子写入：先写同目录的临时文件再 rename。
+
+    直接 write_text 的话，进程在写到一半时被杀（限额中断、Ctrl-C、OOM）会留下
+    半截 JSON，几百集的进度就全毁了。rename 在同一文件系统上是原子的。
+
+    注意：这挡不住两个流水线同时跑——各自持有内存副本，后 save 的会整个覆盖
+    先 save 的。不要并发跑两个 autorun，也不要在流水线运行时手改 state.json。
+    """
     config.CONTENT_DIR.mkdir(parents=True, exist_ok=True)
-    config.STATE_FILE.write_text(
+    tmp = config.STATE_FILE.with_suffix(".json.tmp")
+    tmp.write_text(
         json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+    tmp.replace(config.STATE_FILE)
 
 
 def get_article(state: dict[str, Any], url: str) -> dict[str, Any]:

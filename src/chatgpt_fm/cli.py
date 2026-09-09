@@ -102,6 +102,14 @@ def _pipeline_one(
     article_path = config.article_path(ref.source, slug)
     meta, body = fetch.read_with_frontmatter(article_path)
 
+    # 已经 fetched 的也要验一遍正文：正文校验上线之前落盘的壳页还留在 state 里，
+    # 光靠抓取时拦截够不着它们——抓取那步会被跳过，直接把导航栏送进模型。
+    if not stages.get("interpreted") and not fetch.has_body(body):
+        art["skipped"] = f"只提取到导航栏，页面没有正文: {ref.url}"
+        state.save(st)
+        print("        跳过，页面没有正文（已永久标记）", flush=True)
+        return False
+
     # 2. 解读
     if not stages.get("interpreted"):
         print(f"  [2/4] 模型生成解读稿（{config.interpret_model()}，可能需要几分钟）...")
