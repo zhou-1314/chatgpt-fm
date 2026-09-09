@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>ChatGPT FM</title>
+<link>https://zhou-1314.github.io/chatgpt-fm</link>
+<language>zh-cn</language>
+<description><![CDATA[把 OpenAI 官网的前沿技术内容做成中文解读：模型发布、Codex 与智能体工程、对齐与安全研究、产品与 API 更新……通勤、健身随时听，用碎片时间积累最前沿的 AI 知识。原文版权归 OpenAI，中文解读由 AI 模型生成，仅供学习。]]></description>
+<itunes:summary><![CDATA[把 OpenAI 官网的前沿技术内容做成中文解读：模型发布、Codex 与智能体工程、对齐与安全研究、产品与 API 更新……通勤、健身随时听，用碎片时间积累最前沿的 AI 知识。原文版权归 OpenAI，中文解读由 AI 模型生成，仅供学习。]]></itunes:summary>
+<itunes:author>ChatGPT FM</itunes:author>
+<itunes:explicit>false</itunes:explicit>
+<itunes:type>episodic</itunes:type>
+<itunes:image href="https://zhou-1314.github.io/chatgpt-fm/cover.jpg"/>
+<itunes:category text="Technology"/>
+<itunes:owner><itunes:name>ChatGPT FM</itunes:name><itunes:email>liguangpeng9495@gmail.com</itunes:email></itunes:owner>
+<image><url>https://zhou-1314.github.io/chatgpt-fm/cover.jpg</url><title>ChatGPT FM</title><link>https://zhou-1314.github.io/chatgpt-fm</link></image>
+<atom:link href="https://zhou-1314.github.io/chatgpt-fm/feed.xml" rel="self" type="application/rss+xml"/>
+<lastBuildDate>Wed, 09 Sep 2026 05:05:28 +0000</lastBuildDate>
+<item>
+<title>EP5 · 2026-05-27 | 让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解</title>
+<itunes:title>EP5 · 2026-05-27 | 让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解</itunes:title>
+<itunes:episode>5</itunes:episode>
+<description><![CDATA[本期深度拆解 OpenAI 与 Thrive Holdings 联合发布的工程实践报告，讲述他们如何为 Crete 会计师事务所网络打造出一套能够自我迭代进化的 AI 税务系统 Tax AI。从上线初期只有四分之一的申报表达标，到六周后超过八成达标，背后藏着一套值得所有 AI 工程师借鉴的系统设计方法论。这不是一篇关于"AI 能做什么"的文章，而是一篇关于"怎么让 AI 在生产环境里越做越好"的工程实践记录。
+
+- Tax AI 的实际效果：节省三分之一时间、97% 准确率、50% 吞吐量提升
+- 三大支柱：从业者紧密协作、生产轨迹积累、Codex 驱动的改进循环
+- 什么是 production trace，为什么它比普通日志更有价值
+- Codex 如何将从业者的一次纠错转化成有界的工程任务
+- 租赁房产案例：一个字段缺失 bug 的完整发现与修复链路
+- 对软件工程师的直接启示：如何设计能自我学习的 AI 产品]]></description>
+<content:encoded><![CDATA[本期深度拆解 OpenAI 与 Thrive Holdings 联合发布的工程实践报告，讲述他们如何为 Crete 会计师事务所网络打造出一套能够自我迭代进化的 AI 税务系统 Tax AI。从上线初期只有四分之一的申报表达标，到六周后超过八成达标，背后藏着一套值得所有 AI 工程师借鉴的系统设计方法论。这不是一篇关于"AI 能做什么"的文章，而是一篇关于"怎么让 AI 在生产环境里越做越好"的工程实践记录。<br/><br/>- Tax AI 的实际效果：节省三分之一时间、97% 准确率、50% 吞吐量提升<br/>- 三大支柱：从业者紧密协作、生产轨迹积累、Codex 驱动的改进循环<br/>- 什么是 production trace，为什么它比普通日志更有价值<br/>- Codex 如何将从业者的一次纠错转化成有界的工程任务<br/>- 租赁房产案例：一个字段缺失 bug 的完整发现与修复链路<br/>- 对软件工程师的直接启示：如何设计能自我学习的 AI 产品]]></content:encoded>
+<pubDate>Wed, 27 May 2026 08:00:05 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP5.mp3" length="7844976" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-05-27-Building self-improving tax agents with Codex</guid>
+<itunes:duration>21:47</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP4 · 2026-06-30 | 两个不可能的 Bug：OpenAI 如何用流行病学思维破解神秘崩溃</title>
+<itunes:title>EP4 · 2026-06-30 | 两个不可能的 Bug：OpenAI 如何用流行病学思维破解神秘崩溃</itunes:title>
+<itunes:episode>4</itunes:episode>
+<description><![CDATA[OpenAI 工程团队在 Rockset 服务里发现了一种神秘崩溃：普通的 C++ 函数在返回时跳到了空指针，或者栈指针寄存器凭空偏移了 8 字节。他们花了数周时间，最终发现背后藏着两个完全不相关的 bug——一个是云端物理机的静默硬件错误，另一个是 GNU libunwind 库里潜伏了整整十八年的竞态条件。本期详细拆解整个调查过程，以及那个关键的方法论转变。
+
+- 为什么 C++ 的内存不安全让崩溃调试变得格外棘手，以及 OpenAI 如何用 core dump 来追踪生产故障
+- 两类诡异崩溃的技术细节：返回到空指针，以及栈指针寄存器的 8 字节偏移究竟意味着什么
+- 从"医生模式"到"流行病学家模式"的方法论转变，以及如何用自动化管线建立高质量的全量崩溃数据集
+- 静默硬件错误：云端 CPU 可以在没有任何报警的情况下算出错误结果
+- GNU libunwind 十八年老 bug 的完整机制：一条指令宽的竞态窗口，百皮秒级的时间窗，以及三个因素的乘积如何让它从不可见变为可见
+- 对基础设施工程师的实践启示：如何建立更好的崩溃分析体系，以及哪些系统设计选择会放大这类风险]]></description>
+<content:encoded><![CDATA[OpenAI 工程团队在 Rockset 服务里发现了一种神秘崩溃：普通的 C++ 函数在返回时跳到了空指针，或者栈指针寄存器凭空偏移了 8 字节。他们花了数周时间，最终发现背后藏着两个完全不相关的 bug——一个是云端物理机的静默硬件错误，另一个是 GNU libunwind 库里潜伏了整整十八年的竞态条件。本期详细拆解整个调查过程，以及那个关键的方法论转变。<br/><br/>- 为什么 C++ 的内存不安全让崩溃调试变得格外棘手，以及 OpenAI 如何用 core dump 来追踪生产故障<br/>- 两类诡异崩溃的技术细节：返回到空指针，以及栈指针寄存器的 8 字节偏移究竟意味着什么<br/>- 从"医生模式"到"流行病学家模式"的方法论转变，以及如何用自动化管线建立高质量的全量崩溃数据集<br/>- 静默硬件错误：云端 CPU 可以在没有任何报警的情况下算出错误结果<br/>- GNU libunwind 十八年老 bug 的完整机制：一条指令宽的竞态窗口，百皮秒级的时间窗，以及三个因素的乘积如何让它从不可见变为可见<br/>- 对基础设施工程师的实践启示：如何建立更好的崩溃分析体系，以及哪些系统设计选择会放大这类风险]]></content:encoded>
+<pubDate>Tue, 30 Jun 2026 08:00:04 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP4.mp3" length="10203552" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-06-30-Core dump epidemiology - fixing an 18-year-old bug</guid>
+<itunes:duration>28:20</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP3 · 2026-07-29 | 让模型优化模型：GPT 五点六如何同时拿下前沿智能与前沿效率</title>
+<itunes:title>EP3 · 2026-07-29 | 让模型优化模型：GPT 五点六如何同时拿下前沿智能与前沿效率</itunes:title>
+<itunes:episode>3</itunes:episode>
+<description><![CDATA[本期我们深度解读 OpenAI 于二〇二六年七月二十九日发布的工程博客，揭秘 GPT-5.6 模型家族如何在旗舰智能与极致成本之间找到新的平衡点。文章不只讲模型本身，更深入拆解了推理栈与智能体编排层两大领域的系统级优化，其中最引人入胜的是：GPT-5.6 Sol 在 Codex 中亲自参与并加速了这些优化工作，形成一个"模型自我改进基础设施"的真实正向飞轮。
+
+- GPT-5.6 家族三档定位：Sol（旗舰推理，胜 Claude Fable 5 且不到一半价格）、Terra（智能对标 GPT-5.5 但价格减半）、Luna（比 Sol 便宜 80%）
+- 推理栈四大优化方向：负载均衡（效果显著）、kernel 重写（降本 20%）、投机解码（提效 15%+）、KV 缓存精细化配置
+- GPT-5.6 Sol 在 Codex 中自主重写生产 kernel，使用 OpenAI 开源 GPU 编程语言 Triton 和 Gluon
+- OpenAI 开源验证工具 FpSan（浮点数清理器），保障模型生成 kernel 的数值正确性
+- 智能体编排层两大杀手锏：延迟工具发现（deferred discovery）与 append-only prompt 缓存高命中率设计
+- 最大启示：当 AI 开始自主优化自身基础设施，这个加速飞轮将以超越人类工程师的节奏持续运转]]></description>
+<content:encoded><![CDATA[本期我们深度解读 OpenAI 于二〇二六年七月二十九日发布的工程博客，揭秘 GPT-5.6 模型家族如何在旗舰智能与极致成本之间找到新的平衡点。文章不只讲模型本身，更深入拆解了推理栈与智能体编排层两大领域的系统级优化，其中最引人入胜的是：GPT-5.6 Sol 在 Codex 中亲自参与并加速了这些优化工作，形成一个"模型自我改进基础设施"的真实正向飞轮。<br/><br/>- GPT-5.6 家族三档定位：Sol（旗舰推理，胜 Claude Fable 5 且不到一半价格）、Terra（智能对标 GPT-5.5 但价格减半）、Luna（比 Sol 便宜 80%）<br/>- 推理栈四大优化方向：负载均衡（效果显著）、kernel 重写（降本 20%）、投机解码（提效 15%+）、KV 缓存精细化配置<br/>- GPT-5.6 Sol 在 Codex 中自主重写生产 kernel，使用 OpenAI 开源 GPU 编程语言 Triton 和 Gluon<br/>- OpenAI 开源验证工具 FpSan（浮点数清理器），保障模型生成 kernel 的数值正确性<br/>- 智能体编排层两大杀手锏：延迟工具发现（deferred discovery）与 append-only prompt 缓存高命中率设计<br/>- 最大启示：当 AI 开始自主优化自身基础设施，这个加速飞轮将以超越人类工程师的节奏持续运转]]></content:encoded>
+<pubDate>Wed, 29 Jul 2026 08:00:03 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP3.mp3" length="9128304" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-07-29-How GPT-5.6 fuses frontier intelligence with frontier efficiency</guid>
+<itunes:duration>25:21</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP2 · 2026-08-03 | 六个月打造实时语音AI：OpenAI全双工架构工程内幕</title>
+<itunes:title>EP2 · 2026-08-03 | 六个月打造实时语音AI：OpenAI全双工架构工程内幕</itunes:title>
+<itunes:episode>2</itunes:episode>
+<description><![CDATA[本期我们深度拆解 OpenAI 的一篇工程博客，揭秘他们如何在六个月内从零打造出第三代语音系统 GPT-Live。这套系统的核心突破是全双工架构，彻底移除了过去语音AI依赖的"轮次检测器"，让语音对话第一次真正感觉像人和人在聊天。
+
+本期要点
+
+- 轮次检测器为何成为语音AI的根本瓶颈，以及全双工如何从架构层解决这个问题
+- 有状态推理的运维挑战：无缝实例切换与上下文压缩如何做到对话不中断
+- 异步委托机制：GPT-Live 如何在不打断对话的前提下调用 GPT-5.5 做深度推理
+- 消息分割的工程难题：如何把连续音频流拆解成下游系统能理解的离散消息
+- WARP 协议和 Instant Connect：把 WebRTC 连接建立从六个来回压缩到一个 UDP 包
+- 影子测试的真实收获：地理分布、长时会话、容量模型，哪些坑只有真实流量才能暴露]]></description>
+<content:encoded><![CDATA[本期我们深度拆解 OpenAI 的一篇工程博客，揭秘他们如何在六个月内从零打造出第三代语音系统 GPT-Live。这套系统的核心突破是全双工架构，彻底移除了过去语音AI依赖的"轮次检测器"，让语音对话第一次真正感觉像人和人在聊天。<br/><br/>本期要点<br/><br/>- 轮次检测器为何成为语音AI的根本瓶颈，以及全双工如何从架构层解决这个问题<br/>- 有状态推理的运维挑战：无缝实例切换与上下文压缩如何做到对话不中断<br/>- 异步委托机制：GPT-Live 如何在不打断对话的前提下调用 GPT-5.5 做深度推理<br/>- 消息分割的工程难题：如何把连续音频流拆解成下游系统能理解的离散消息<br/>- WARP 协议和 Instant Connect：把 WebRTC 连接建立从六个来回压缩到一个 UDP 包<br/>- 影子测试的真实收获：地理分布、长时会话、容量模型，哪些坑只有真实流量才能暴露]]></content:encoded>
+<pubDate>Mon, 03 Aug 2026 08:00:02 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP2.mp3" length="9201456" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-08-03-How we built a realtime system for responsive voice AI in six months</guid>
+<itunes:duration>25:33</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+<item>
+<title>EP1 · 2026-08-25 | OpenAI 首款自研芯片 Jalapeño 实测：推理效率与速度全面刷新行业基准</title>
+<itunes:title>EP1 · 2026-08-25 | OpenAI 首款自研芯片 Jalapeño 实测：推理效率与速度全面刷新行业基准</itunes:title>
+<itunes:episode>1</itunes:episode>
+<description><![CDATA[本期聊的是 OpenAI 于 2026 年 8 月 25 日公布的首块自研推理芯片 Jalapeño 首批实测数据。这不只是一次硬件发布，它代表 OpenAI 正式走上全栈垂直整合路线，同时也是 AI 加速 AI 基础设施开发的真实案例。数据显示，Jalapeño 在效率与速度两个维度同时领先对比系统，打破了两者通常需要权衡取舍的惯例。
+
+- OpenAI 首块自研推理芯片 Jalapeño 公布测试结果，每瓦吞吐量领先对比系统 1.5 到 1.9 倍
+- 端到端延迟降低 1.7 到 3.6 倍，对 agent 多步连续推理场景影响最为显著
+- 跨三个来自不同机构的公开大模型测试：GPT-OSS 一百二十 B、DeepSeek R 一和 Kimi K 二点五
+- 芯片从设计到流片仅用九个月，AI 工具在设计与优化全程发挥关键作用
+- AI 生成内核代码在特定模块上比人类专家代码快 1.5 到 1.8 倍
+- Jalapeño 是多代芯片平台的起点，第二代已深度开发中，计划年底前开始规模部署]]></description>
+<content:encoded><![CDATA[本期聊的是 OpenAI 于 2026 年 8 月 25 日公布的首块自研推理芯片 Jalapeño 首批实测数据。这不只是一次硬件发布，它代表 OpenAI 正式走上全栈垂直整合路线，同时也是 AI 加速 AI 基础设施开发的真实案例。数据显示，Jalapeño 在效率与速度两个维度同时领先对比系统，打破了两者通常需要权衡取舍的惯例。<br/><br/>- OpenAI 首块自研推理芯片 Jalapeño 公布测试结果，每瓦吞吐量领先对比系统 1.5 到 1.9 倍<br/>- 端到端延迟降低 1.7 到 3.6 倍，对 agent 多步连续推理场景影响最为显著<br/>- 跨三个来自不同机构的公开大模型测试：GPT-OSS 一百二十 B、DeepSeek R 一和 Kimi K 二点五<br/>- 芯片从设计到流片仅用九个月，AI 工具在设计与优化全程发挥关键作用<br/>- AI 生成内核代码在特定模块上比人类专家代码快 1.5 到 1.8 倍<br/>- Jalapeño 是多代芯片平台的起点，第二代已深度开发中，计划年底前开始规模部署]]></content:encoded>
+<pubDate>Tue, 25 Aug 2026 08:00:01 +0000</pubDate>
+<enclosure url="https://zhou-1314.github.io/chatgpt-fm/audio/EP1.mp3" length="9615888" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-08-25-Jalapeño’s first results show industry-leading speed and efficiency in AI inference</guid>
+<itunes:duration>26:42</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
+</channel>
+</rss>
