@@ -190,10 +190,29 @@ VOICE_CANDIDATES = {
     "zh-CN-XiaoyiNeural": "女声，柔和",
 }
 
-# ── 播客 RSS（托管在自有服务器，供小宇宙等客户端订阅）────────────────────
-# 音频与 feed.xml 通过 Caddy/Nginx 托管，对外 https 访问。
-# 部署前把 FEED_BASE_URL 改成你自己的域名。
-FEED_BASE_URL = "https://chatgpt-fm.example.com"
+# ── 播客发布（全部托管在 GitHub 上，不需要自己的服务器）──────────────────
+# 分工：
+#   - feed.xml / 目录页  → GitHub Pages（仓库 main 分支的 docs/ 目录）
+#   - 音频 mp3           → GitHub Release 附件（单个 Release 挂全部音频）
+# 之所以不把音频也放 Pages：Pages 单站点上限 1GB，几百集音频装不下；
+# Release 附件单文件上限 2GB、总量不设限，正好适合放音频。
+GITHUB_OWNER = _env("GITHUB_OWNER", "zhou-1314")
+GITHUB_REPO = _env("GITHUB_REPO", "chatgpt-fm")
+AUDIO_RELEASE_TAG = _env("AUDIO_RELEASE_TAG", "audio")
+
+# Pages 站点根：feed.xml 和 index.html 发布到这里
+FEED_BASE_URL = _env(
+    "FEED_BASE_URL", f"https://{GITHUB_OWNER}.github.io/{GITHUB_REPO}"
+)
+# Release 附件下载前缀：音频 enclosure 指向这里
+AUDIO_BASE_URL = _env(
+    "AUDIO_BASE_URL",
+    f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}"
+    f"/releases/download/{AUDIO_RELEASE_TAG}",
+)
+# Pages 发布目录（仓库里真实存在、会被提交，Pages 直接从 main 分支的它读取）
+SITE_DIR = ROOT / "docs"
+
 PODCAST_TITLE = "ChatGPT FM"
 PODCAST_DESCRIPTION = (
     "把 OpenAI 官网的前沿技术内容做成中文解读：模型发布、Codex 与智能体工程、"
@@ -202,7 +221,7 @@ PODCAST_DESCRIPTION = (
 )
 PODCAST_AUTHOR = "ChatGPT FM"
 PODCAST_EMAIL = "liguangpeng9495@gmail.com"
-PODCAST_COVER = f"{FEED_BASE_URL}/cover.jpg"     # 需上传一张 ≥1400×1400 封面
+PODCAST_COVER = f"{FEED_BASE_URL}/cover.jpg"     # 放一张 ≥1400×1400 的 docs/cover.jpg
 PODCAST_CATEGORY = "Technology"
 PODCAST_LANGUAGE = "zh-cn"
 
@@ -217,6 +236,20 @@ USER_AGENT = (
 # curl_cffi 的浏览器指纹档位。openai.com 挂了 Cloudflare 机器人校验，普通
 # httpx/curl 会吃 403，必须用真实 Chrome 的 TLS 指纹才拿得到正文。
 IMPERSONATE = "chrome"
+
+
+def audio_asset_name(episode_no: int) -> str:
+    """音频在 GitHub Release 里的附件名。
+
+    不能直接用 slug：slug 里有空格、中文和 ’ 这类字符，GitHub 上传时会自己改名，
+    改完的下载地址对不上 feed 里写的 URL。用集号最稳——ASCII、唯一、集号一旦
+    分配就不再变。
+    """
+    return f"EP{episode_no}.mp3"
+
+
+def audio_url(episode_no: int) -> str:
+    return f"{AUDIO_BASE_URL}/{audio_asset_name(episode_no)}"
 
 
 def ensure_dirs() -> None:

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>ChatGPT FM</title>
+<link>https://zhou-1314.github.io/chatgpt-fm</link>
+<language>zh-cn</language>
+<description><![CDATA[把 OpenAI 官网的前沿技术内容做成中文解读：模型发布、Codex 与智能体工程、对齐与安全研究、产品与 API 更新……通勤、健身随时听，用碎片时间积累最前沿的 AI 知识。原文版权归 OpenAI，中文解读由 AI 模型生成，仅供学习。]]></description>
+<itunes:summary><![CDATA[把 OpenAI 官网的前沿技术内容做成中文解读：模型发布、Codex 与智能体工程、对齐与安全研究、产品与 API 更新……通勤、健身随时听，用碎片时间积累最前沿的 AI 知识。原文版权归 OpenAI，中文解读由 AI 模型生成，仅供学习。]]></itunes:summary>
+<itunes:author>ChatGPT FM</itunes:author>
+<itunes:explicit>false</itunes:explicit>
+<itunes:type>episodic</itunes:type>
+<itunes:image href="https://zhou-1314.github.io/chatgpt-fm/cover.jpg"/>
+<itunes:category text="Technology"/>
+<itunes:owner><itunes:name>ChatGPT FM</itunes:name><itunes:email>liguangpeng9495@gmail.com</itunes:email></itunes:owner>
+<image><url>https://zhou-1314.github.io/chatgpt-fm/cover.jpg</url><title>ChatGPT FM</title><link>https://zhou-1314.github.io/chatgpt-fm</link></image>
+<atom:link href="https://zhou-1314.github.io/chatgpt-fm/feed.xml" rel="self" type="application/rss+xml"/>
+<lastBuildDate>Wed, 09 Sep 2026 02:09:35 +0000</lastBuildDate>
+</channel>
+</rss>

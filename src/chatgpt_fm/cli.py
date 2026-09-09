@@ -2,6 +2,7 @@
 
   chatgpt-fm discover                      列出各源文章数与新文章
   chatgpt-fm run [--source X] [--limit N] [--url URL]   端到端流水线
+  chatgpt-fm publish                       发布到 GitHub（音频→Release，feed→Pages）
   chatgpt-fm voices                        生成音色试听样品
   chatgpt-fm status                        显示各篇进度
 """
@@ -375,7 +376,8 @@ def cmd_weekly(args) -> None:
     print("\n========== 刷新 RSS 与目录 ==========", flush=True)
     cmd_feed(None)
     cmd_catalog(None)
-    print("\n✅ 本周更新完成。待同步音频在 content/openai/*/audio/，feed.xml 已刷新。", flush=True)
+    print("\n✅ 本周更新完成。接着跑 `chatgpt-fm publish` 把音频传到 Release、"
+          "刷新 docs/ 下的 feed 与目录页。", flush=True)
 
 
 def cmd_catalog(args) -> None:
@@ -390,8 +392,40 @@ def cmd_feed(args) -> None:
     """生成播客 RSS feed.xml（含全部已打包集），供小宇宙等订阅。"""
     from . import feed
     out, n = feed.write_feed()
-    print(f"已生成 {out}（{n} 集）")
-    print(f"上传到服务器后，订阅地址：{config.FEED_BASE_URL}/feed.xml")
+    print(f"已生成 {out.relative_to(config.ROOT)}（{n} 集）")
+    print(f"提交并推送后，订阅地址：{config.FEED_BASE_URL}/feed.xml")
+
+
+def cmd_publish(args) -> None:
+    """发布到 GitHub：音频传 Release 附件，feed.xml + 目录页写进 docs/ 供 Pages 提供。"""
+    from . import publish
+
+    tag = args.tag or config.AUDIO_RELEASE_TAG
+    print(f"仓库：{config.GITHUB_OWNER}/{config.GITHUB_REPO}  ·  音频 Release：{tag}")
+    if args.dry_run:
+        print("（--dry-run：只列要做什么，不真的上传）")
+
+    print("\n[1/2] 同步音频到 Release 附件")
+    try:
+        uploaded, skipped = publish.upload_audio(tag, dry_run=args.dry_run)
+    except publish.GitHubCliError as e:
+        print(f"  ❌ {e}", file=sys.stderr)
+        print("  提示：先确认 `gh auth status` 已登录，且仓库已经创建。", file=sys.stderr)
+        return
+    if uploaded or skipped:
+        print(f"      上传 {uploaded} 个，跳过 {skipped} 个（已是最新）")
+    else:
+        print("      本地还没有已打包的音频，跳过。")
+
+    print("\n[2/2] 生成 Pages 站点")
+    site, n = publish.write_site()
+    print(f"      {site.relative_to(config.ROOT)}/feed.xml     （{n} 集）")
+    print(f"      {site.relative_to(config.ROOT)}/index.html")
+
+    print("\n提交并推送 docs/ 后生效：")
+    print(f"  git add docs && git commit -m 'update feed' && git push")
+    print(f"\n订阅地址：{config.FEED_BASE_URL}/feed.xml")
+    print(f"目录页　：{config.FEED_BASE_URL}/")
 
 
 def cmd_voices(args) -> None:
@@ -445,8 +479,13 @@ def main() -> None:
     p = sub.add_parser("weekly", help="每周日一条命令：四源增量解读 + news 上周周报")
     p.set_defaults(func=cmd_weekly)
 
-    p = sub.add_parser("feed", help="生成播客 RSS feed.xml")
+    p = sub.add_parser("feed", help="生成播客 RSS docs/feed.xml")
     p.set_defaults(func=cmd_feed)
+
+    p = sub.add_parser("publish", help="发布到 GitHub：音频传 Release，feed + 目录页进 docs/")
+    p.add_argument("--tag", help=f"音频 Release 的 tag（默认 {config.AUDIO_RELEASE_TAG}）")
+    p.add_argument("--dry-run", action="store_true", help="只列要上传什么，不真的传")
+    p.set_defaults(func=cmd_publish)
 
     p = sub.add_parser("catalog", help="生成全集目录 CATALOG.md 并刷新 README 集数")
     p.set_defaults(func=cmd_catalog)

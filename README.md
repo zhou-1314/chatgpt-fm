@@ -25,10 +25,10 @@
 用**任意播客 App**（小宇宙、Apple Podcasts、Pocket Casts 等）粘贴下面的 RSS 地址订阅：
 
 ```
-https://chatgpt-fm.example.com/feed.xml
+https://zhou-1314.github.io/chatgpt-fm/feed.xml
 ```
 
-> 部署前请把 `src/chatgpt_fm/config.py` 里的 `FEED_BASE_URL` 换成你自己的域名。
+也可以直接打开网页版目录：**<https://zhou-1314.github.io/chatgpt-fm/>**
 
 ## 📖 也可以直接读文字版
 
@@ -79,7 +79,8 @@ chatgpt-fm run --source engineering --limit 3   # 端到端跑几篇
 chatgpt-fm autorun --source research      # 无人值守，撞限额自动等重置续跑
 chatgpt-fm news                           # 把上一周的 news 打包成「一周快讯」
 chatgpt-fm weekly                         # 每周日一条命令：四源增量 + news 周报 + RSS + 目录
-chatgpt-fm feed                           # 生成播客 RSS content/feed.xml
+chatgpt-fm feed                           # 生成播客 RSS docs/feed.xml
+chatgpt-fm publish                        # 发布到 GitHub：音频→Release，feed+目录页→Pages
 chatgpt-fm catalog                        # 生成 CATALOG.md 并刷新 README 集数
 chatgpt-fm voices                         # 生成音色试听样品
 chatgpt-fm status                         # 查看各篇进度
@@ -87,6 +88,35 @@ chatgpt-fm status                         # 查看各篇进度
 
 流水线每篇走四步：**抓取原文 → 模型生成解读稿 → edge-tts 合成音频 → 生成上传包**。
 进度记在 `content/state.json`，全程幂等——中断后重跑会跳过已完成的阶段。
+
+### 部署：全部托管在 GitHub 上，不需要自己的服务器
+
+| 放什么 | 放哪 | 为什么 |
+|---|---|---|
+| 代码、中文解读稿、英文原文 | 仓库本体 | 纯文本，几 MB |
+| `feed.xml`、网页目录页 | GitHub Pages（`main` 分支的 `docs/`） | 几十 KB，随仓库一起提交 |
+| 单集音频 mp3 | GitHub Release 附件（tag `audio`） | Pages 单站点上限 1GB，几百集音频装不下；Release 附件单文件上限 2GB、总量不限 |
+
+音频附件一律按集号命名（`EP12.mp3`）。slug 里有空格、中文和 `’`，GitHub 上传时会自己
+改名，改完的下载地址会和 feed 里写的对不上；集号是 ASCII、唯一、分配后不再变。
+
+每周更新的完整流程就两条命令：
+
+```bash
+chatgpt-fm weekly     # 抓取 → 解读 → TTS → 上传包 → 刷新 CATALOG
+chatgpt-fm publish    # 音频传 Release，重写 docs/feed.xml 与 docs/index.html
+git add -A && git commit -m "weekly update" && git push
+```
+
+`publish` 是幂等的：附件同名同大小就跳过，只传新增或重新合成过的那几集，
+所以中断后重跑不会把已上传的音频再传一遍。先看看它打算做什么可以加 `--dry-run`。
+
+换成你自己的仓库/域名，改 `config.py` 里的 `GITHUB_OWNER` / `GITHUB_REPO`
+（也可以用同名环境变量或 `.env` 覆盖），或直接设 `FEED_BASE_URL` / `AUDIO_BASE_URL`。
+
+**首次部署还要做两件事**：
+1. 仓库 Settings → Pages → Source 选 `Deploy from a branch`，分支 `main`、目录 `/docs`；
+2. 放一张 ≥1400×1400 的封面图到 `docs/cover.jpg`（播客 App 要求，没有封面上不了架）。
 
 ### 内容源是怎么发现的
 

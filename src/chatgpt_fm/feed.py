@@ -1,13 +1,13 @@
 """生成标准播客 RSS（RSS 2.0 + iTunes 标签），供小宇宙等客户端订阅。
 
-音频托管在自有服务器：<FEED_BASE_URL>/audio/<source>/<slug>.mp3
-feed.xml 也放服务器根：<FEED_BASE_URL>/feed.xml
+全部托管在 GitHub 上：
+  - feed.xml → docs/feed.xml，由 GitHub Pages 提供 <FEED_BASE_URL>/feed.xml
+  - 音频     → GitHub Release 附件，enclosure 指向 <AUDIO_BASE_URL>/EP<n>.mp3
 """
 
 import re
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
-from urllib.parse import quote
 from xml.sax.saxutils import escape
 
 from . import config, state
@@ -52,7 +52,7 @@ def _meta(source: str, rec: dict) -> dict | None:
         "date": date,
         "duration": int(rec.get("duration_sec") or 0),
         "bytes": audio.stat().st_size,
-        "url": f"{config.FEED_BASE_URL}/audio/{source}/{quote(slug)}.mp3",
+        "url": config.audio_url(ep),
         "guid": f"{source}/{slug}",
     }
 
@@ -126,8 +126,10 @@ def build_feed() -> str:
 
 
 def write_feed() -> tuple:
+    """写到 Pages 发布目录 docs/feed.xml，随仓库一起提交。"""
     xml = build_feed()
-    out = config.CONTENT_DIR / "feed.xml"
+    config.SITE_DIR.mkdir(parents=True, exist_ok=True)
+    out = config.SITE_DIR / "feed.xml"
     out.write_text(xml, encoding="utf-8")
     n = xml.count("<item>")
     return out, n
