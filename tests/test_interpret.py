@@ -106,3 +106,59 @@ class TestInterpretWriting(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCodexLimitReset(unittest.TestCase):
+    """codex 的 429 响应体带精确重置时间，必须解析出来。
+
+    实测响应体（ChatGPT Pro 撞周限额时）：
+      {"error":{"type":"usage_limit_reached","message":"The usage limit has been reached",
+                "plan_type":"pro","resets_at":1789435516,"resets_in_seconds":513840}}
+    """
+
+    PRO_WEEKLY = ('{"error":{"type":"usage_limit_reached","message":"The usage limit has '
+                  'been reached","plan_type":"pro","resets_at":1789435516,'
+                  '"resets_in_seconds":513840}}')
+
+    def test_weekly_limit_is_flagged_and_not_slept_through(self):
+        err = interpret._codex_limit_error(self.PRO_WEEKLY, "quota exceeded")
+        self.assertEqual(err.reset_seconds, 513840)
+        self.assertTrue(err.weekly)          # 6 天后重置，autorun 必须停下而不是睡等
+        self.assertIn("天后", err.reset_raw)
+
+    def test_short_limit_is_sleepable(self):
+        err = interpret._codex_limit_error(
+            '{"error":{"resets_in_seconds":1800}}', "rate limited")
+        self.assertEqual(err.reset_seconds, 1800)
+        self.assertFalse(err.weekly)         # 半小时，睡等即可
+        self.assertIn("小时后", err.reset_raw)
+
+    def test_resets_at_timestamp_is_converted(self):
+        import time as _t
+        raw = '{"error":{"resets_at":%d}}' % int(_t.time() + 7200)
+        err = interpret._codex_limit_error(raw, "x")
+        self.assertIsNotNone(err.reset_seconds)
+        self.assertAlmostEqual(err.reset_seconds, 7200, delta=10)
+
+    def test_unparseable_body_degrades_gracefully(self):
+        for raw in ("not json", "", "{}", '{"error":null}'):
+            err = interpret._codex_limit_error(raw, "quota exceeded")
+            self.assertIsInstance(err, interpret.SessionLimitError)
+            self.assertIsNone(err.reset_seconds)
+            self.assertFalse(err.weekly)
+
+
+class TestSecondsUntilReset(unittest.TestCase):
+    def test_precise_seconds_win_over_text(self):
+        from chatgpt_fm import cli
+        self.assertEqual(cli._seconds_until_reset("4:50pm", 1800), 1980)  # 1800 + 180 缓冲
+
+    def test_falls_back_to_text_parsing(self):
+        from chatgpt_fm import cli
+        got = cli._seconds_until_reset("4:50pm", None)
+        self.assertGreater(got, 0)
+        self.assertLessEqual(got, 24 * 3600 + 180)
+
+    def test_no_information_falls_back_to_an_hour(self):
+        from chatgpt_fm import cli
+        self.assertEqual(cli._seconds_until_reset("", None), 3600)

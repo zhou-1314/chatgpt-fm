@@ -221,7 +221,7 @@ PODCAST_DESCRIPTION = (
 )
 PODCAST_AUTHOR = "ChatGPT FM"
 PODCAST_EMAIL = "liguangpeng9495@gmail.com"
-PODCAST_COVER = f"{FEED_BASE_URL}/cover.jpg"     # 放一张 ≥1400×1400 的 docs/cover.jpg
+PODCAST_COVER = f"{FEED_BASE_URL}/cover.jpg"     # docs/cover.jpg，1400×1400
 PODCAST_CATEGORY = "Technology"
 PODCAST_LANGUAGE = "zh-cn"
 

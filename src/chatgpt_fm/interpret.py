@@ -63,14 +63,52 @@ def build_prompt(title: str, url: str, source: str, published: str, article: str
     )
 
 
-class SessionLimitError(RuntimeError):
-    """模型后端限额耗尽。reset_raw 是原始重置时间文本（如 '4:50pm'）；
-    weekly=True 表示是周限额（重置在数天后，不该睡等，应停下提示换号）。"""
+# 重置超过这个时长就当"长周期限额"：不睡等，停下来让人换后端或换号。
+LONG_LIMIT_SECONDS = 6 * 3600
 
-    def __init__(self, message: str, reset_raw: str = "", weekly: bool = False):
+
+class SessionLimitError(RuntimeError):
+    """模型后端限额耗尽。
+
+    reset_raw    原始重置时间文本（claude CLI 给的是 '4:50pm' 这种）
+    reset_seconds 距重置还有多少秒（codex 的错误体里有精确值，claude 没有）
+    weekly       长周期限额（重置在数小时之后），不该睡等，应停下提示换号
+    """
+
+    def __init__(self, message: str, reset_raw: str = "", weekly: bool = False,
+                 reset_seconds: int | None = None):
         super().__init__(message)
         self.reset_raw = reset_raw
         self.weekly = weekly
+        self.reset_seconds = reset_seconds
+
+
+def _codex_limit_error(raw: str, message: str) -> SessionLimitError:
+    """从 codex 的错误响应体里读出重置时间。
+
+    429 的响应体形如：
+      {"error":{"type":"usage_limit_reached","plan_type":"pro",
+                "resets_at":1789435516,"resets_in_seconds":513840}}
+    Pro 的周限额一撞就是好几天，不解析出来的话 autorun 会按默认的 1 小时
+    反复空转到重置为止。
+    """
+    seconds = None
+    try:
+        err = (json.loads(raw) or {}).get("error") or {}
+        if isinstance(err.get("resets_in_seconds"), (int, float)):
+            seconds = int(err["resets_in_seconds"])
+        elif isinstance(err.get("resets_at"), (int, float)):
+            seconds = int(err["resets_at"] - time.time())
+    except (json.JSONDecodeError, TypeError, AttributeError):
+        pass
+    if seconds is None or seconds < 0:
+        return SessionLimitError(message)
+    hours = seconds / 3600
+    human = f"{hours:.1f} 小时后" if hours < 48 else f"{seconds / 86400:.1f} 天后"
+    return SessionLimitError(
+        f"{message}（重置：{human}）", reset_raw=human,
+        weekly=seconds > LONG_LIMIT_SECONDS, reset_seconds=seconds,
+    )
 
 
 class CodexAuthError(RuntimeError):
@@ -150,16 +188,17 @@ def _run_codex_once(prompt: str) -> str:
                 raw = response.read().decode("utf-8", "ignore")
                 message = _friendly_codex_error(response.status_code, raw)
                 if _is_codex_limit_error(response.status_code, message):
-                    raise SessionLimitError(message)
+                    raise _codex_limit_error(raw, message)
                 raise RuntimeError(message)
             for event in _iter_sse(response):
                 event_type = event.get("type")
                 if event_type == "response.output_text.delta":
                     parts.append(event.get("delta") or "")
                 elif event_type in {"error", "response.failed"}:
-                    message = f"Codex stream error: {json.dumps(event, ensure_ascii=False)[:500]}"
+                    payload = json.dumps(event, ensure_ascii=False)
+                    message = f"Codex stream error: {payload[:500]}"
                     if _is_codex_limit_error(None, message):
-                        raise SessionLimitError(message)
+                        raise _codex_limit_error(payload, message)
                     raise RuntimeError(message)
     text = "".join(parts).strip()
     if not text:

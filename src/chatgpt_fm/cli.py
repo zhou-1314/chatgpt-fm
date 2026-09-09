@@ -213,9 +213,16 @@ def cmd_run(args) -> None:
         print(f"  失败: {url}\n    {err}")
 
 
-def _seconds_until_reset(reset_raw: str) -> int:
-    """把 '4:50pm' / '7am' 这类重置时间换算成距现在的秒数（Asia/Shanghai）。
-    解析不出来就回退 1 小时。额外加 3 分钟缓冲。"""
+def _seconds_until_reset(reset_raw: str, reset_seconds: int | None = None) -> int:
+    """算出该睡多久再续跑。额外加 3 分钟缓冲。
+
+    codex 的错误体里直接带精确秒数（reset_seconds），有就用它；
+    claude CLI 只给 '4:50pm' 这种文本，退回按 Asia/Shanghai 推算；
+    都拿不到就回退 1 小时。
+    """
+    if reset_seconds is not None and reset_seconds >= 0:
+        return reset_seconds + 180
+
     import re as _re
     from datetime import datetime, timedelta
     from zoneinfo import ZoneInfo
@@ -271,7 +278,8 @@ def cmd_autorun(args) -> None:
             print(f"[autorun] ⛔ 撞到【每周限额】（重置: {limit_err.reset_raw or '见错误信息'}）。"
                   f"睡等数天不现实，已停止。请换个账号后重新运行 autorun，会自动续传。", flush=True)
             return
-        wait = _seconds_until_reset(limit_err.reset_raw)
+        wait = _seconds_until_reset(limit_err.reset_raw,
+                                    getattr(limit_err, "reset_seconds", None))
         wake = datetime.now().timestamp() + wait
         print(f"[autorun] 撞会话限额，睡 {wait // 60} 分钟，{datetime.fromtimestamp(wake):%H:%M} "
               f"后自动续跑（重置标记: {limit_err.reset_raw or '未知'}）", flush=True)
@@ -347,7 +355,8 @@ def cmd_news(args) -> None:
             print(f"[news] ⛔ 撞到【每周限额】（重置: {limit_err.reset_raw or '见错误信息'}）。"
                   f"已停止，请换号后重新运行 news，会自动续传。", flush=True)
             return
-        wait = _seconds_until_reset(limit_err.reset_raw)
+        wait = _seconds_until_reset(limit_err.reset_raw,
+                                    getattr(limit_err, "reset_seconds", None))
         wake = datetime.now().timestamp() + wait
         print(f"[news] 撞会话限额，睡 {wait // 60} 分钟，{datetime.fromtimestamp(wake):%H:%M} "
               f"后自动续跑", flush=True)
