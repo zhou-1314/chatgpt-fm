@@ -413,9 +413,9 @@ def cmd_weekly(args) -> None:
 def cmd_catalog(args) -> None:
     """生成全集目录 CATALOG.md，并刷新 README 集数。"""
     from . import catalog
-    total, by_src = catalog.build_catalog()
+    total, counts, _ = catalog.build_catalog()
     print(f"已生成 CATALOG.md（{total} 集：" +
-          "，".join(f"{k} {v}" for k, v in by_src.items()) + "），README 集数已刷新")
+          "，".join(f"{k} {v}" for k, v in counts.items()) + "），README 进度已刷新")
 
 
 def cmd_feed(args) -> None:
@@ -435,7 +435,7 @@ def cmd_publish(args) -> None:
     if args.dry_run:
         print("（--dry-run：只构建本地站点，不推送）")
 
-    print("\n[1/3] 生成 feed 与目录页")
+    print("\n[1/3] 刷新目录、生成 feed 与目录页")
     site, n = publish.write_site()
     print(f"      {site.name}/feed.xml     （{n} 集）")
     print(f"      {site.name}/index.html")

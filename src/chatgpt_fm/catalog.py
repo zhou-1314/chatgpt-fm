@@ -52,7 +52,8 @@ def _all(st: dict) -> dict:
     return by_src
 
 
-def build_catalog() -> tuple:
+def build_catalog() -> tuple[int, dict, dict]:
+    """写出 CATALOG.md、刷新 README 进度。返回 (总集数, 各源集数, 分组明细)。"""
     st = state.load()
     by_src = _all(st)
     total = sum(len(v) for v in by_src.values())
@@ -74,8 +75,8 @@ def build_catalog() -> tuple:
         lines.append("")
     (config.ROOT / "CATALOG.md").write_text("\n".join(lines), encoding="utf-8")
     counts = {s: len(by_src[s]) for s, _, _ in _SRC_META}
-    _refresh_readme_count(total, counts)
-    return total, counts
+    _refresh_readme_count(total, counts, by_src)
+    return total, counts, by_src
 
 
 # README 表格里各源对应的标签（去掉 emoji 的纯文字部分）
@@ -83,8 +84,28 @@ def _table_label(label: str) -> str:
     return label.split(" ", 1)[-1] if " " in label else label
 
 
-def _refresh_readme_count(total: int, counts: dict) -> None:
-    """把 README 里徽章、表格总数、以及各源行的集数都刷成最新。"""
+# README 里"最新单集"区块的标记。catalog 每次运行都会重写这两行之间的内容，
+# 免得 README 的进度和实际集数长期对不上。
+LATEST_START = "<!-- LATEST:START -->"
+LATEST_END = "<!-- LATEST:END -->"
+LATEST_COUNT = 8
+
+
+def _latest_block(by_src: dict) -> str:
+    """跨源取最新的几集，渲染成 README 里的列表。"""
+    items = [(e, name) for name, es in by_src.items() for e in es]
+    items.sort(key=lambda x: (x[0]["date"], x[0]["ep"]), reverse=True)
+    if not items:
+        return "_还没有已发布的单集。_"
+    lines = []
+    for e, name in items[:LATEST_COUNT]:
+        label = config.SOURCES[name]["label"].split(" ", 1)[0]  # 只取 emoji
+        lines.append(f"- {label} `EP{e['ep']}` · {e['date']} · [{e['title']}]({e['link']})")
+    return "\n".join(lines)
+
+
+def _refresh_readme_count(total: int, counts: dict, by_src: dict | None = None) -> None:
+    """把 README 里徽章、表格总数、各源集数、最新单集列表都刷成最新。"""
     readme = config.ROOT / "README.md"
     if not readme.exists():
         return
@@ -96,4 +117,10 @@ def _refresh_readme_count(total: int, counts: dict) -> None:
     for s, label, _ in _SRC_META:
         name = re.escape(_table_label(label))
         text = re.sub(rf"({name} \| )\d+( \|)", rf"\g<1>{counts[s]}\g<2>", text)
+    if by_src is not None and LATEST_START in text and LATEST_END in text:
+        block = f"{LATEST_START}\n\n{_latest_block(by_src)}\n\n{LATEST_END}"
+        text = re.sub(
+            re.escape(LATEST_START) + r".*?" + re.escape(LATEST_END),
+            lambda _: block, text, flags=re.S,
+        )
     readme.write_text(text, encoding="utf-8")

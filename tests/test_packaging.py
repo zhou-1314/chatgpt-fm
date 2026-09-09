@@ -105,7 +105,7 @@ class TestPackagingChain(unittest.TestCase):
                 "| 📰 News 周报 | 0 |\n| | **0 集** |\n",
                 encoding="utf-8",
             )
-            total, counts = catalog.build_catalog()
+            total, counts, by_src = catalog.build_catalog()
             self.assertEqual(total, 2)
             self.assertEqual(counts["engineering"], 1)
             self.assertEqual(counts[config.DIGEST_SOURCE], 1)
@@ -181,3 +181,41 @@ class TestEpisodePathIsRelative(unittest.TestCase):
             text = config.episode_path(config.DIGEST_SOURCE, week["slug"]).read_text(encoding="utf-8")
             self.assertIn("content/openai/news/audio/", text)
             self.assertNotIn(str(root), text)
+
+
+class TestReadmeLatestBlock(unittest.TestCase):
+    """README 的「最新单集」区块由 catalog 自动重写，免得进度长期停在 0。"""
+
+    README = (
+        "![episodes](https://img.shields.io/badge/已更新-0%20集-1DB954)\n"
+        "完整 0 集目录\n\n"
+        "| 来源 | 集数 |\n|---|---|\n| 🛠️ Engineering | 0 |\n| 📰 News 周报 | 0 |\n"
+        "| | **0 集** |\n\n"
+        "<!-- LATEST:START -->\n旧的过时内容\n<!-- LATEST:END -->\n\n结尾段落。\n"
+    )
+
+    def test_block_is_replaced_with_current_episodes(self):
+        with TempRoot() as root:
+            _make_episode("engineering", "2026-02-11-A", 1, "甲集标题")
+            (root / "README.md").write_text(self.README, encoding="utf-8")
+            state.save({"next_episode": 2, "articles": {
+                "u1": {"stages": {"packaged": True}, "source": "engineering",
+                       "slug": "2026-02-11-A", "published": "2026-02-11", "episode": 1}}})
+            catalog.build_catalog()
+            text = (root / "README.md").read_text(encoding="utf-8")
+            self.assertNotIn("旧的过时内容", text)
+            self.assertIn("甲集标题", text)
+            self.assertIn("`EP1`", text)
+            self.assertIn("已更新-1%20集", text)
+            self.assertIn("结尾段落。", text)   # 区块外的内容不能被吃掉
+
+    def test_readme_without_markers_is_left_alone(self):
+        with TempRoot() as root:
+            (root / "README.md").write_text("没有标记的 README\n", encoding="utf-8")
+            state.save({"next_episode": 1, "articles": {}})
+            catalog.build_catalog()
+            self.assertEqual((root / "README.md").read_text(encoding="utf-8"),
+                             "没有标记的 README\n")
+
+    def test_empty_catalogue_renders_placeholder(self):
+        self.assertIn("还没有", catalog._latest_block({}))

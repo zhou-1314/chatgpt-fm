@@ -208,6 +208,9 @@ def write_site() -> tuple[Path, int]:
     from . import catalog, feed
 
     config.SITE_DIR.mkdir(parents=True, exist_ok=True)
+    # 顺手刷新 CATALOG.md 与 README 进度：发布了却忘了更新目录，
+    # 结果就是 README 上永远写着 0 集
+    catalog.build_catalog()
     _, n = feed.write_feed()
     by_src = catalog._all(state.load())
     (config.SITE_DIR / "index.html").write_text(build_index(by_src), encoding="utf-8")
