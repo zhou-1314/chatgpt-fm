@@ -84,3 +84,46 @@ RSS 分类 → 本仓库的源：
 4. **五个源而不是四个**：OpenAI 的 Safety / Preparedness 内容量大且有知识含量，
    单独成源；`config.SOURCES` 驱动全部下游（catalog、cli、feed 都不写死源名）。
 
+---
+
+## 七、GitHub 部署（2026-09-09）
+
+仓库：**<https://github.com/zhou-1314/chatgpt-fm>**（公开）
+
+托管分工，按各自的容量上限来定：
+
+| 放什么 | 放哪 | 上限 |
+|---|---|---|
+| 代码、中文解读稿、英文原文 | 仓库本体 | 纯文本，几 MB |
+| `feed.xml`、网页目录页 | GitHub Pages（`main` 分支 `/docs`） | 站点 1GB，我们只用几十 KB |
+| 单集音频 mp3 | GitHub Release 附件（tag `audio`） | 单文件 2GB，总量不限 |
+
+音频不能用 slug 命名：slug 里有空格、中文和 `’`，GitHub 上传时会自己改名，
+改完的下载地址和 feed 里写的对不上。改用集号 `EP<n>.mp3`——ASCII、唯一、
+集号一旦分配就不再变。
+
+### 部署验证记录
+
+| 验证项 | 结果 |
+|---|---|
+| 仓库创建 + 推送 | ✅ 3 个 commit 已上 main |
+| Pages 开启（main `/docs`） | ✅ build status = `built`，耗时 23.5s |
+| 目录页 `https://zhou-1314.github.io/chatgpt-fm/` | ✅ HTTP 200 |
+| RSS `https://zhou-1314.github.io/chatgpt-fm/feed.xml` | ✅ HTTP 200，合法 XML，channel 元信息正确 |
+| Release `audio` 创建 + `gh` 读写 | ✅ 可创建、可列附件 |
+| **音频 URL 全链路** | ✅ 传 `EP0.mp3` → 用 `config.audio_url(0)` 下载 → 199440 字节**逐字节一致**，验证后已删除 |
+| 单元测试 | ✅ **79 passed**（新增 12 个覆盖 publish） |
+
+### 已知的一处小风险
+
+GitHub Release 下载返回的 `Content-Type` 是 `application/octet-stream` 而不是
+`audio/mpeg`。播客客户端主要认 RSS `<enclosure type="audio/mpeg">`，小宇宙、
+Pocket Casts 这类都能正常播；但 Apple Podcasts 的提交校验对此偶有挑剔。
+真上架 Apple 时如果被拒，退路是把音频挪到自建服务器或对象存储（改
+`AUDIO_BASE_URL` 一个变量即可，feed 逻辑不用动）。
+
+### 还差两步（需要你做）
+
+1. **封面图**：放一张 ≥1400×1400 的 `docs/cover.jpg` 再提交。播客 App 强制要求，没有封面上不了架。
+2. **跑第一批内容**：本机 `codex login`（或在 `.env` 配 DeepSeek key）后
+   `chatgpt-fm autorun --source engineering` → `chatgpt-fm publish` → 提交推送。
