@@ -166,3 +166,17 @@ class TestThrottle(unittest.TestCase):
     def test_interval_is_configured(self):
         from chatgpt_fm import net
         self.assertGreater(net.MIN_REQUEST_INTERVAL, 0)
+
+
+class TestTtsRetryBackoff(unittest.TestCase):
+    """edge-tts 偶发断流；一块失败会让整篇作废，退避必须够长。"""
+
+    def test_backoff_is_long_enough_to_ride_out_a_blip(self):
+        from chatgpt_fm import tts
+        self.assertGreaterEqual(sum(tts._RETRY_BACKOFF), 100)
+
+    def test_backoff_increases(self):
+        from chatgpt_fm import tts
+        b = tts._RETRY_BACKOFF
+        self.assertEqual(list(b), sorted(b))
+        self.assertGreater(len(b), 2)

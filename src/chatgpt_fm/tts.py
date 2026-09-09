@@ -11,6 +11,12 @@ from . import config
 
 CHUNK_LIMIT = 2000  # 单块最大字符数，过长 edge-tts 易断流
 
+# 单块合成失败后的退避秒数（重试次数 = len + 1）。
+# 原来是 2/4/6/8 秒，累计才 20 秒——实测这点时间扛不住 edge-tts 的断流：
+# 一块失败会让整篇已合成的块全部作废、下一轮从头再来。拉长到累计约 2 分钟，
+# 代价只是偶发失败时多等一会儿，收益是不用重跑整篇。
+_RETRY_BACKOFF = (5, 15, 30, 60)
+
 
 def _edge_tts_proxy() -> str | None:
     return (
@@ -65,7 +71,7 @@ def split_chunks(text: str, limit: int = CHUNK_LIMIT) -> list[str]:
 
 async def _synth_chunk(text: str, voice: str, rate: str) -> bytes:
     last_err: Exception | None = None
-    for attempt in range(4):
+    for attempt in range(len(_RETRY_BACKOFF) + 1):
         try:
             communicate = edge_tts.Communicate(text, voice=voice, rate=rate, proxy=_edge_tts_proxy())
             audio = b""
@@ -77,8 +83,11 @@ async def _synth_chunk(text: str, voice: str, rate: str) -> bytes:
             return audio
         except Exception as e:  # edge-tts 偶发断流，退避重试
             last_err = e
-            await asyncio.sleep(2 * (attempt + 1))
-    raise RuntimeError(f"TTS 块合成失败（4 次）: {last_err}")
+            if attempt < len(_RETRY_BACKOFF):
+                await asyncio.sleep(_RETRY_BACKOFF[attempt])
+    raise RuntimeError(
+        f"TTS 块合成失败（{len(_RETRY_BACKOFF) + 1} 次，累计等待 "
+        f"{sum(_RETRY_BACKOFF)} 秒）: {last_err}")
 
 
 async def synthesize_async(
