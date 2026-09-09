@@ -14,6 +14,10 @@ from datetime import date, timedelta
 from . import config, episode, fetch, interpret, sources, state, tts
 
 
+# 连续失败到这个数就停手：多半是网络/限流，不是单篇文章的问题
+MAX_CONSECUTIVE_FAILURES = 3
+
+
 def _deep_sources() -> list[str]:
     """逐篇深度解读的源（周报源之外的全部）。"""
     return [s for s in config.SOURCES if s != config.DIGEST_SOURCE]
@@ -63,7 +67,15 @@ def _pipeline_one(
     # 1. 抓取
     if not stages.get("fetched"):
         print(f"  [1/4] 抓取原文 {ref.url}")
-        data = fetch.fetch_article(ref)
+        try:
+            data = fetch.fetch_article(ref)
+        except Exception:
+            # get_article 是 setdefault，上面这一步已经把空壳记进 state 了。
+            # 抓取失败就把它摘掉，否则 discover 会把这些 URL 当成"已处理过"，
+            # 新文章数从此对不上。
+            if not art.get("slug"):
+                st["articles"].pop(ref.url, None)
+            raise
         if not _in_date_window(data["published"], published_start, published_end):
             print(
                 f"        跳过，发布日期 {data['published'] or '未知'} 不在 "
@@ -177,6 +189,7 @@ def _run_batch(refs, st, published_start: str | None = None, published_end: str 
     """跑一批文章。返回 (完成数, 失败列表, 限额异常或 None)。
     撞限额时立即停止剩余文章并把 SessionLimitError 上报。"""
     ok, skipped, failed = 0, 0, []
+    consecutive = 0
     for i, ref in enumerate(refs, 1):
         print(f"[{i}/{len(refs)}] {ref.url}")
         try:
@@ -184,6 +197,7 @@ def _run_batch(refs, st, published_start: str | None = None, published_end: str 
                 ok += 1
             else:
                 skipped += 1
+            consecutive = 0
         except interpret.SessionLimitError as e:
             kind = "周限额" if e.weekly else "会话限额"
             print(f"  ⏸ 撞{kind}，暂停（重置: {e.reset_raw or '未知'}）", file=sys.stderr)
@@ -191,6 +205,13 @@ def _run_batch(refs, st, published_start: str | None = None, published_end: str 
         except Exception as e:
             failed.append((ref.url, str(e)))
             print(f"  ❌ 失败: {e}", file=sys.stderr)
+            consecutive += 1
+            # 连续失败多半是网络/限流这类全局问题（实测 openai.com 会因抓太密
+            # 而整站拒连），继续一篇篇试只会加重限流，不如停下等人来看
+            if consecutive >= MAX_CONSECUTIVE_FAILURES:
+                print(f"  ⛔ 连续失败 {consecutive} 篇，判定为网络或限流问题，"
+                      f"本轮提前停止（剩余 {len(refs) - i} 篇未试）", file=sys.stderr)
+                break
     if skipped:
         print(f"跳过 {skipped} 篇不在目标日期窗口的文章。", flush=True)
     return ok, failed, None

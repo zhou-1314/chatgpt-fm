@@ -147,3 +147,54 @@ class TestWriteSite(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestBatchCircuitBreaker(unittest.TestCase):
+    """连续失败多半是限流这类全局问题，继续一篇篇试只会加重，应提前停。"""
+
+    def _refs(self, n):
+        from chatgpt_fm import sources
+        return [sources.ArticleRef(url=f"https://openai.com/index/a{i}",
+                                   source="engineering") for i in range(n)]
+
+    def test_stops_after_consecutive_failures(self):
+        from chatgpt_fm import cli
+        with mock.patch.object(cli, "_pipeline_one", side_effect=RuntimeError("连不上")):
+            ok, failed, limit = cli._run_batch(self._refs(20), {"articles": {}})
+        self.assertEqual(ok, 0)
+        self.assertIsNone(limit)
+        # 熔断后不该把 20 篇全试一遍
+        self.assertEqual(len(failed), cli.MAX_CONSECUTIVE_FAILURES)
+
+    def test_success_resets_the_counter(self):
+        from chatgpt_fm import cli
+        # 失败两次 → 成功一次（计数清零）→ 再失败两次，都不该触发熔断
+        outcomes = [RuntimeError("x"), RuntimeError("x"), True,
+                    RuntimeError("x"), RuntimeError("x"), True]
+        with mock.patch.object(cli, "_pipeline_one", side_effect=outcomes):
+            ok, failed, _ = cli._run_batch(self._refs(6), {"articles": {}})
+        self.assertEqual(ok, 2)
+        self.assertEqual(len(failed), 4)   # 6 篇全试过了，没被提前掐断
+
+
+class TestStateNotPollutedByFetchFailure(unittest.TestCase):
+    """抓取失败不该在 state 里留空壳，否则 discover 的新文章数会永久失真。"""
+
+    def test_failed_fetch_leaves_no_entry(self):
+        from chatgpt_fm import cli, sources
+        st = {"articles": {}}
+        ref = sources.ArticleRef(url="https://openai.com/index/boom", source="engineering")
+        with mock.patch.object(cli.fetch, "fetch_article", side_effect=RuntimeError("抓取失败")):
+            with self.assertRaises(RuntimeError):
+                cli._pipeline_one(ref, st)
+        self.assertNotIn(ref.url, st["articles"])
+
+    def test_already_fetched_entry_is_preserved(self):
+        from chatgpt_fm import cli, sources
+        ref = sources.ArticleRef(url="https://openai.com/index/keep", source="engineering")
+        st = {"articles": {ref.url: {"stages": {"fetched": True}, "slug": "s", "title": "t"}}}
+        with mock.patch.object(cli.fetch, "read_with_frontmatter",
+                               side_effect=RuntimeError("后面某步炸了")):
+            with self.assertRaises(RuntimeError):
+                cli._pipeline_one(ref, st)
+        self.assertIn(ref.url, st["articles"])   # 已抓到的成果不能因后续失败被丢掉

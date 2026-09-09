@@ -141,3 +141,28 @@ class TestConfigPaths(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestThrottle(unittest.TestCase):
+    """连续密集抓 openai.com 会被出口 IP 限流，请求之间必须有最小间隔。"""
+
+    def test_consecutive_calls_are_spaced_out(self):
+        import time
+        from chatgpt_fm import net
+        original = net.MIN_REQUEST_INTERVAL
+        net.MIN_REQUEST_INTERVAL = 0.15
+        net._last_request_at = 0.0
+        try:
+            start = time.monotonic()
+            for _ in range(3):
+                net._throttle()
+            elapsed = time.monotonic() - start
+        finally:
+            net.MIN_REQUEST_INTERVAL = original
+            net._last_request_at = 0.0
+        # 第一次不等，后两次各等一个间隔
+        self.assertGreaterEqual(elapsed, 0.15 * 2 * 0.9)
+
+    def test_interval_is_configured(self):
+        from chatgpt_fm import net
+        self.assertGreater(net.MIN_REQUEST_INTERVAL, 0)

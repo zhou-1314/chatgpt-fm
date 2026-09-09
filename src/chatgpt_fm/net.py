@@ -9,11 +9,29 @@ openai.com 的静态资源（sitemap.xml、news/rss.xml）普通请求就能拿�
 
 import os
 import subprocess
+import threading
 import time
 
 import httpx
 
 from . import config
+
+# 同一时刻只让一个请求在飞，且两次请求之间至少隔这么久。
+# 实测：autorun 连着抓 openai.com 文章页，十几篇之后整站变成连接被 RST
+# （SSL_ERROR_SYSCALL），连 sitemap 都拿不到，停手几分钟才恢复。相对单篇
+# 十几分钟的解读时间，这点间隔可以忽略。
+MIN_REQUEST_INTERVAL = 2.0
+_throttle_lock = threading.Lock()
+_last_request_at = 0.0
+
+
+def _throttle() -> None:
+    global _last_request_at
+    with _throttle_lock:
+        wait = MIN_REQUEST_INTERVAL - (time.monotonic() - _last_request_at)
+        if wait > 0:
+            time.sleep(wait)
+        _last_request_at = time.monotonic()
 
 
 def _proxy() -> str | None:
@@ -75,12 +93,14 @@ def _curl_cffi(url: str, attempts: int = 3) -> str:
         except Exception as exc:  # noqa: BLE001 — 连接层抖动，退避重试
             last_err = exc
         if attempt < attempts - 1:
-            time.sleep(3 * (attempt + 1))
+            # 被出口 IP 限流时几秒根本不够，退避拉到 15/30 秒
+            time.sleep(15 * (attempt + 1))
     raise RuntimeError(f"curl_cffi 失败（{attempts} 次）: {str(last_err)[:200]}")
 
 
 def get_text(url: str, attempts: int = 3, timeout: int = 30) -> str:
     """取回 url 的文本内容，逐级回退；全部失败抛 RuntimeError。"""
+    _throttle()
     errors: list[str] = []
     blocked = False  # httpx 拿到 403/429 → 判定为机器人校验
 
