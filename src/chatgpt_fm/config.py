@@ -190,28 +190,34 @@ VOICE_CANDIDATES = {
     "zh-CN-XiaoyiNeural": "女声，柔和",
 }
 
-# ── 播客发布（全部托管在 GitHub 上，不需要自己的服务器）──────────────────
-# 分工：
-#   - feed.xml / 目录页  → GitHub Pages（仓库 main 分支的 docs/ 目录）
-#   - 音频 mp3           → GitHub Release 附件（单个 Release 挂全部音频）
-# 之所以不把音频也放 Pages：Pages 单站点上限 1GB，几百集音频装不下；
-# Release 附件单文件上限 2GB、总量不设限，正好适合放音频。
+# ── 播客发布（全部托管在 GitHub Pages 上，不需要自己的服务器）────────────
+# 站点产物（feed.xml + 目录页 + 封面 + 全部音频）发布到独立的 gh-pages 分支，
+# main 分支只留代码和文字稿，clone 依然轻量。
+#
+# 音频为什么不能放 GitHub Release：Release 的下载地址返回
+#   content-type: application/octet-stream
+#   content-disposition: attachment; filename=EP1.mp3
+# attachment 是致命的——它告诉客户端"这是要下载保存的附件"，播放器据此拒绝
+# 内联播放，Apple Podcasts 上表现为「无法播放」。Pages 对 .mp3 返回
+# audio/mp3、不带 content-disposition、支持 Range，才是播客要的。
+#
+# 代价：Pages 单站点上限 1GB，按单集约 9MB 算大概 111 集封顶。超了就把音频
+# 挪到对象存储，改 AUDIO_BASE_URL 一个变量即可，feed 逻辑不用动。
 GITHUB_OWNER = _env("GITHUB_OWNER", "zhou-1314")
 GITHUB_REPO = _env("GITHUB_REPO", "chatgpt-fm")
-AUDIO_RELEASE_TAG = _env("AUDIO_RELEASE_TAG", "audio")
+PAGES_BRANCH = _env("PAGES_BRANCH", "gh-pages")
 
-# Pages 站点根：feed.xml 和 index.html 发布到这里
+# Pages 站点根：feed.xml、index.html、cover.jpg 都在这
 FEED_BASE_URL = _env(
     "FEED_BASE_URL", f"https://{GITHUB_OWNER}.github.io/{GITHUB_REPO}"
 )
-# Release 附件下载前缀：音频 enclosure 指向这里
-AUDIO_BASE_URL = _env(
-    "AUDIO_BASE_URL",
-    f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}"
-    f"/releases/download/{AUDIO_RELEASE_TAG}",
-)
-# Pages 发布目录（仓库里真实存在、会被提交，Pages 直接从 main 分支的它读取）
-SITE_DIR = ROOT / "docs"
+# 音频前缀：站点下的 audio/ 子目录
+AUDIO_BASE_URL = _env("AUDIO_BASE_URL", f"{FEED_BASE_URL}/audio")
+
+# 本地站点构建目录（不入库，publish 时同步到 gh-pages 分支）
+SITE_DIR = ROOT / ".site"
+# 封面源图放在仓库里，publish 时复制进站点
+COVER_SOURCE = ROOT / "assets" / "cover.jpg"
 
 PODCAST_TITLE = "ChatGPT FM"
 PODCAST_DESCRIPTION = (

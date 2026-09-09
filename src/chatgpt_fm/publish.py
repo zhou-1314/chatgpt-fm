@@ -1,15 +1,15 @@
-"""发布到 GitHub：音频传 Release 附件，feed.xml + 目录页写进 docs/ 供 Pages 提供。
+"""发布到 GitHub Pages：站点产物（feed + 目录页 + 封面 + 音频）推到 gh-pages 分支。
 
-为什么这么分：
-  - GitHub Pages 单站点上限 1GB，几百集 mp3（claude-fm 同规模约 1.7GB）放不下；
-  - Release 附件单文件上限 2GB、总量不设限，正好托音频；
-  - 于是 docs/ 只放几十 KB 的 feed.xml 和 index.html，音频走 Release 下载地址。
+为什么音频也走 Pages 而不是 Release：Release 的下载地址带
+`content-disposition: attachment` 且 content-type 是 application/octet-stream，
+播放器会当成"要下载的附件"而拒绝内联播放（Apple Podcasts 上就是「无法播放」）。
+Pages 对 .mp3 返回 audio/mp3、不带 disposition、支持 Range，才是播客要的。
 
-音频附件一律按集号命名（EP12.mp3）。slug 里有空格、中文和 ’，GitHub 上传时会
-自己改名，改完的地址和 feed 里写的对不上；集号是 ASCII、唯一、分配后不再变。
+站点单独放 gh-pages 分支，main 保持纯文本，clone 不会被几百 MB 音频拖累。
+音频在站点里一律按集号命名（EP12.mp3）：slug 里有空格、中文和 ’，直接做 URL
+要转义，集号是 ASCII、唯一、分配后不再变。
 """
 
-import json
 import shutil
 import subprocess
 import tempfile
@@ -20,28 +20,14 @@ from . import config, state
 
 
 class GitHubCliError(RuntimeError):
-    pass
-
-
-def _gh(*args: str, check: bool = True) -> str:
-    """跑一条 gh 命令，返回 stdout。"""
-    proc = subprocess.run(
-        ["gh", *args], capture_output=True, text=True,
-        cwd=config.ROOT,
-    )
-    if check and proc.returncode != 0:
-        raise GitHubCliError(
-            f"gh {' '.join(args)} 失败（exit {proc.returncode}）：\n"
-            f"{(proc.stderr or proc.stdout).strip()[:600]}"
-        )
-    return proc.stdout
+    """git / gh 子命令失败。"""
 
 
 def _repo() -> str:
     return f"{config.GITHUB_OWNER}/{config.GITHUB_REPO}"
 
 
-# ── 音频 → Release 附件 ───────────────────────────────────────────────────
+# ── 收集音频 ─────────────────────────────────────────────────────────────
 
 def collect_audio(st: dict) -> list[dict]:
     """已打包且音频文件在本地的集，返回 [{ep, source, slug, path}]，按集号排序。"""
@@ -60,65 +46,80 @@ def collect_audio(st: dict) -> list[dict]:
     return out
 
 
-def ensure_release(tag: str) -> None:
-    """Release 不存在就建一个。已存在则原样保留（附件都挂在它下面）。"""
-    proc = subprocess.run(
-        ["gh", "release", "view", tag, "--repo", _repo()],
-        capture_output=True, text=True, cwd=config.ROOT,
-    )
-    if proc.returncode == 0:
-        return
-    _gh("release", "create", tag,
-        "--repo", _repo(),
-        "--title", f"{config.PODCAST_TITLE} 音频",
-        "--notes",
-        f"{config.PODCAST_TITLE} 的全部单集音频，按集号命名（EP<n>.mp3）。\n\n"
-        f"订阅地址：{config.FEED_BASE_URL}/feed.xml\n\n"
-        "音频由 edge-tts 合成，原文版权归 OpenAI。")
+def sync_audio(site_dir: Path, dry_run: bool = False) -> tuple[int, int]:
+    """把本地音频按集号复制进站点的 audio/。返回 (新增或更新数, 跳过数)。
 
-
-def release_assets(tag: str) -> dict[str, int]:
-    """Release 上已有的附件 {名字: 字节数}。Release 不存在返回空。"""
-    proc = subprocess.run(
-        ["gh", "release", "view", tag, "--repo", _repo(), "--json", "assets"],
-        capture_output=True, text=True, cwd=config.ROOT,
-    )
-    if proc.returncode != 0:
-        return {}
-    assets = json.loads(proc.stdout or "{}").get("assets") or []
-    return {a["name"]: a.get("size", 0) for a in assets}
-
-
-def upload_audio(tag: str, dry_run: bool = False) -> tuple[int, int]:
-    """把本地新增/变更的音频传上 Release。返回 (上传数, 跳过数)。"""
-    st = state.load()
-    episodes = collect_audio(st)
-    if not episodes:
-        return 0, 0
+    同名同大小就跳过——几百集全量复制一遍既慢又会让 git 认为文件都变了。
+    """
+    audio_dir = site_dir / "audio"
     if not dry_run:
-        ensure_release(tag)
-    existing = release_assets(tag)
+        audio_dir.mkdir(parents=True, exist_ok=True)
+    copied = skipped = 0
+    for e in collect_audio(state.load()):
+        dest = audio_dir / config.audio_asset_name(e["ep"])
+        size = e["path"].stat().st_size
+        if dest.exists() and dest.stat().st_size == size:
+            skipped += 1
+            continue
+        print(f"  + EP{e['ep']:<5} {dest.name:<12} {size / 1024 / 1024:6.1f} MB  {e['slug'][:42]}")
+        if not dry_run:
+            shutil.copyfile(e["path"], dest)
+        copied += 1
+    return copied, skipped
 
-    uploaded = skipped = 0
-    with tempfile.TemporaryDirectory() as tmp:
-        for e in episodes:
-            name = config.audio_asset_name(e["ep"])
-            size = e["path"].stat().st_size
-            if existing.get(name) == size:      # 同名同大小，认为已是最新
-                skipped += 1
-                continue
-            print(f"  ↑ EP{e['ep']:<5} {name:<12} {size / 1024 / 1024:6.1f} MB  {e['slug'][:44]}")
-            if dry_run:
-                uploaded += 1
-                continue
-            # gh 用文件名当附件名，所以先复制成目标名再传
-            staged = Path(tmp) / name
-            shutil.copyfile(e["path"], staged)
-            _gh("release", "upload", tag, str(staged),
-                "--repo", _repo(), "--clobber")
-            staged.unlink()
-            uploaded += 1
-    return uploaded, skipped
+
+# ── 推送到 gh-pages 分支 ─────────────────────────────────────────────────
+
+def push_site(site_dir: Path, branch: str, message: str) -> str:
+    """把 site_dir 的内容提交并推送到 branch。
+
+    用 git worktree 挂一个独立工作区，不碰主工作区（流水线可能正在写 content/）。
+    分支不存在就建成 orphan，历史从头开始。
+    """
+    worktree = Path(tempfile.mkdtemp(prefix="chatgpt-fm-pages-"))
+    worktree.rmdir()  # git worktree add 要求目标不存在
+    remote_exists = _git("ls-remote", "--heads", "origin", branch).strip() != ""
+    try:
+        if remote_exists:
+            _git("fetch", "origin", f"{branch}:{branch}", check=False)
+            _git("worktree", "add", str(worktree), branch)
+        else:
+            _git("worktree", "add", "--detach", str(worktree))
+            _git("-C", str(worktree), "checkout", "--orphan", branch)
+            _git("-C", str(worktree), "rm", "-rf", "--quiet", ".", check=False)
+
+        _mirror(site_dir, worktree)
+        _git("-C", str(worktree), "add", "-A")
+        status = _git("-C", str(worktree), "status", "--porcelain")
+        if not status.strip():
+            return "站点内容没有变化，跳过提交"
+        _git("-C", str(worktree), "-c", "user.name=zhou-1314",
+             "-c", "user.email=zhouwg1314@gmail.com", "commit", "-q", "-m", message)
+        _git("-C", str(worktree), "push", "-q", "origin", f"HEAD:{branch}")
+        return f"已推送到 {branch}（{len(status.strip().splitlines())} 个文件变更）"
+    finally:
+        _git("worktree", "remove", "--force", str(worktree), check=False)
+        shutil.rmtree(worktree, ignore_errors=True)
+
+
+def _mirror(src: Path, dest: Path) -> None:
+    """把 src 的内容同步到 dest，删掉 dest 里多余的文件（.git 除外）。"""
+    for item in dest.iterdir():
+        if item.name == ".git":
+            continue
+        shutil.rmtree(item) if item.is_dir() else item.unlink()
+    for item in src.iterdir():
+        target = dest / item.name
+        shutil.copytree(item, target) if item.is_dir() else shutil.copyfile(item, target)
+
+
+def _git(*args: str, check: bool = True) -> str:
+    proc = subprocess.run(["git", *args], capture_output=True, text=True, cwd=config.ROOT)
+    if check and proc.returncode != 0:
+        raise GitHubCliError(
+            f"git {' '.join(args[:4])} 失败（exit {proc.returncode}）：\n"
+            f"{(proc.stderr or proc.stdout).strip()[:600]}")
+    return proc.stdout
 
 
 # ── Pages 目录页 ─────────────────────────────────────────────────────────
@@ -150,12 +151,6 @@ a.title:hover { border-bottom-color:var(--accent); }
 .links a:hover { color:var(--accent); }
 footer { margin-top:3em; padding-top:1.4em; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
 """
-
-
-def _blob(path: str) -> str:
-    """仓库文件在 GitHub 上的网页地址。"""
-    from urllib.parse import quote
-    return f"https://github.com/{_repo()}/blob/main/{quote(path)}"
 
 
 def build_index(by_src: dict) -> str:
@@ -209,13 +204,15 @@ def build_index(by_src: dict) -> str:
 
 
 def write_site() -> tuple[Path, int]:
-    """生成 docs/feed.xml 与 docs/index.html。返回 (docs 目录, 集数)。"""
+    """生成站点：feed.xml、index.html、封面、.nojekyll。返回 (站点目录, 集数)。"""
     from . import catalog, feed
 
     config.SITE_DIR.mkdir(parents=True, exist_ok=True)
     _, n = feed.write_feed()
     by_src = catalog._all(state.load())
     (config.SITE_DIR / "index.html").write_text(build_index(by_src), encoding="utf-8")
-    # 没有这个文件 Pages 会把 docs/ 当 Jekyll 源码处理，下划线开头的资源会被吞掉
+    # 没有这个文件 Pages 会用 Jekyll 处理站点，下划线开头的资源会被吞掉
     (config.SITE_DIR / ".nojekyll").touch()
+    if config.COVER_SOURCE.exists():
+        shutil.copyfile(config.COVER_SOURCE, config.SITE_DIR / "cover.jpg")
     return config.SITE_DIR, n

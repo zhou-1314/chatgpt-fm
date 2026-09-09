@@ -1,5 +1,5 @@
 {
-  "next_episode": 2,
+  "next_episode": 6,
   "articles": {
     "https://openai.com/index/jalapeno-first-results": {
       "stages": {
@@ -27,13 +27,73 @@
     },
     "https://openai.com/index/continuous-voice-interaction-with-gpt-live": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "engineering",
       "slug": "2026-08-03-How we built a realtime system for responsive voice AI in six months",
       "title": "How we built a realtime system for responsive voice AI in six months",
-      "published": "2026-08-03"
+      "published": "2026-08-03",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1533.6,
+      "episode": 2
+    },
+    "https://openai.com/index/gpt-5-6-frontier-intelligence-efficiency": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-07-29-How GPT-5.6 fuses frontier intelligence with frontier efficiency",
+      "title": "How GPT-5.6 fuses frontier intelligence with frontier efficiency",
+      "published": "2026-07-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1521.4,
+      "episode": 3
+    },
+    "https://openai.com/index/core-dump-epidemiology-data-infrastructure-bug": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-06-30-Core dump epidemiology - fixing an 18-year-old bug",
+      "title": "Core dump epidemiology: fixing an 18-year-old bug",
+      "published": "2026-06-30",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1700.6,
+      "episode": 4
+    },
+    "https://openai.com/index/building-self-improving-tax-agents-with-codex": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-05-27-Building self-improving tax agents with Codex",
+      "title": "Building self-improving tax agents with Codex",
+      "published": "2026-05-27",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1307.5,
+      "episode": 5
+    },
+    "https://openai.com/index/building-codex-windows-sandbox": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2026-05-13-Building a safe, effective sandbox to enable Codex on Windows",
+      "title": "Building a safe, effective sandbox to enable Codex on Windows",
+      "published": "2026-05-13"
     }
   },
-  "voice_rotation": 1
+  "voice_rotation": 5
 }

@@ -32,3 +32,4 @@ DEPLOY.md
 
 # 一键周更脚本（含服务器信息，本地保留）
 weekly.sh
+.site/

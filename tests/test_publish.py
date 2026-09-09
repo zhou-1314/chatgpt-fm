@@ -1,6 +1,7 @@
 """publish.py：附件命名、待上传集合、Pages 首页渲染。不碰网络、不调 gh。"""
 
 import unittest
+from pathlib import Path
 from unittest import mock
 
 from chatgpt_fm import config, publish
@@ -13,11 +14,13 @@ class TestAssetNaming(unittest.TestCase):
         self.assertEqual(name, "EP123.mp3")
         self.assertTrue(name.isascii())
 
-    def test_url_points_at_the_release(self):
+    def test_url_points_at_pages_not_release(self):
         url = config.audio_url(7)
-        self.assertTrue(url.startswith("https://github.com/"))
-        self.assertIn("/releases/download/", url)
-        self.assertTrue(url.endswith("/EP7.mp3"))
+        # Release 的地址带 content-disposition: attachment，播放器会拒播，
+        # 所以音频必须走 Pages
+        self.assertTrue(url.startswith(config.FEED_BASE_URL))
+        self.assertNotIn("/releases/download/", url)
+        self.assertTrue(url.endswith("/audio/EP7.mp3"))
 
     def test_slug_characters_never_reach_the_url(self):
         # slug 里有空格/中文/’，GitHub 会改名；集号命名就是为了绕开这个
@@ -55,50 +58,70 @@ class TestCollectAudio(unittest.TestCase):
             self.assertEqual(publish.collect_audio(self._state()), [])
 
 
-class TestUploadAudio(unittest.TestCase):
-    def test_unchanged_assets_are_skipped(self):
-        with TempRoot():
-            _make_episode("engineering", "2026-02-11-A", 1, "甲", audio_bytes=b"x" * 4096)
-            st = {"next_episode": 2, "articles": {
-                "u1": {"stages": {"packaged": True}, "source": "engineering",
-                       "slug": "2026-02-11-A", "episode": 1}}, "digests": {}}
-            with mock.patch.object(publish.state, "load", return_value=st), \
-                 mock.patch.object(publish, "ensure_release"), \
-                 mock.patch.object(publish, "release_assets", return_value={"EP1.mp3": 4096}), \
-                 mock.patch.object(publish, "_gh") as gh:
-                uploaded, skipped = publish.upload_audio("audio")
-            self.assertEqual((uploaded, skipped), (0, 1))
-            gh.assert_not_called()
+class TestSyncAudio(unittest.TestCase):
+    ST = {"next_episode": 2, "articles": {
+        "u1": {"stages": {"packaged": True}, "source": "engineering",
+               "slug": "2026-02-11-A", "episode": 1}}, "digests": {}}
 
-    def test_changed_size_triggers_reupload(self):
-        with TempRoot():
+    def test_audio_is_copied_under_episode_number(self):
+        with TempRoot() as root:
             _make_episode("engineering", "2026-02-11-A", 1, "甲", audio_bytes=b"x" * 4096)
-            st = {"next_episode": 2, "articles": {
-                "u1": {"stages": {"packaged": True}, "source": "engineering",
-                       "slug": "2026-02-11-A", "episode": 1}}, "digests": {}}
-            with mock.patch.object(publish.state, "load", return_value=st), \
-                 mock.patch.object(publish, "ensure_release"), \
-                 mock.patch.object(publish, "release_assets", return_value={"EP1.mp3": 99}), \
-                 mock.patch.object(publish, "_gh") as gh:
-                uploaded, skipped = publish.upload_audio("audio")
-            self.assertEqual((uploaded, skipped), (1, 0))
-            args = gh.call_args[0]
-            self.assertEqual(args[:3], ("release", "upload", "audio"))
-            self.assertIn("--clobber", args)
-            self.assertTrue(args[3].endswith("EP1.mp3"))   # 传的是改好名的副本
+            site = root / "site"
+            with mock.patch.object(publish.state, "load", return_value=self.ST):
+                copied, skipped = publish.sync_audio(site)
+            self.assertEqual((copied, skipped), (1, 0))
+            dest = site / "audio" / "EP1.mp3"
+            self.assertTrue(dest.exists())
+            self.assertEqual(dest.stat().st_size, 4096)
 
-    def test_dry_run_uploads_nothing(self):
-        with TempRoot():
+    def test_unchanged_audio_is_skipped(self):
+        with TempRoot() as root:
+            _make_episode("engineering", "2026-02-11-A", 1, "甲", audio_bytes=b"x" * 4096)
+            site = root / "site"
+            with mock.patch.object(publish.state, "load", return_value=self.ST):
+                publish.sync_audio(site)
+                copied, skipped = publish.sync_audio(site)   # 第二次
+            # 同名同大小不该重复复制，否则几百集每次 publish 都会让 git 认为全变了
+            self.assertEqual((copied, skipped), (0, 1))
+
+    def test_resynthesised_audio_is_replaced(self):
+        with TempRoot() as root:
+            _make_episode("engineering", "2026-02-11-A", 1, "甲", audio_bytes=b"x" * 4096)
+            site = root / "site"
+            with mock.patch.object(publish.state, "load", return_value=self.ST):
+                publish.sync_audio(site)
+                # 重新合成，大小变了
+                config.audio_path("engineering", "2026-02-11-A").write_bytes(b"y" * 8192)
+                copied, skipped = publish.sync_audio(site)
+            self.assertEqual((copied, skipped), (1, 0))
+            self.assertEqual((site / "audio" / "EP1.mp3").stat().st_size, 8192)
+
+    def test_dry_run_writes_nothing(self):
+        with TempRoot() as root:
             _make_episode("engineering", "2026-02-11-A", 1, "甲")
-            st = {"next_episode": 2, "articles": {
-                "u1": {"stages": {"packaged": True}, "source": "engineering",
-                       "slug": "2026-02-11-A", "episode": 1}}, "digests": {}}
-            with mock.patch.object(publish.state, "load", return_value=st), \
-                 mock.patch.object(publish, "release_assets", return_value={}), \
-                 mock.patch.object(publish, "_gh") as gh:
-                uploaded, _ = publish.upload_audio("audio", dry_run=True)
-            self.assertEqual(uploaded, 1)
-            gh.assert_not_called()
+            site = root / "site"
+            with mock.patch.object(publish.state, "load", return_value=self.ST):
+                copied, _ = publish.sync_audio(site, dry_run=True)
+            self.assertEqual(copied, 1)
+            self.assertFalse((site / "audio").exists())
+
+
+class TestMirror(unittest.TestCase):
+    def test_stale_files_are_removed_but_git_is_kept(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            src, dest = Path(tmp) / "src", Path(tmp) / "dest"
+            (src / "audio").mkdir(parents=True)
+            (src / "feed.xml").write_text("new", encoding="utf-8")
+            (src / "audio" / "EP1.mp3").write_bytes(b"a")
+            (dest / ".git").mkdir(parents=True)
+            (dest / ".git" / "HEAD").write_text("ref", encoding="utf-8")
+            (dest / "stale.html").write_text("old", encoding="utf-8")
+            publish._mirror(src, dest)
+            self.assertFalse((dest / "stale.html").exists())
+            self.assertEqual((dest / "feed.xml").read_text(encoding="utf-8"), "new")
+            self.assertTrue((dest / "audio" / "EP1.mp3").exists())
+            self.assertTrue((dest / ".git" / "HEAD").exists())   # .git 绝不能动
 
 
 class TestIndexPage(unittest.TestCase):
@@ -137,7 +160,7 @@ class TestWriteSite(unittest.TestCase):
         with TempRoot() as root:
             (root / "README.md").write_text("| 🛠️ Engineering | 0 |\n", encoding="utf-8")
             site, n = publish.write_site()
-            self.assertEqual(site, root / "docs")
+            self.assertEqual(site, root / ".site")
             self.assertTrue((site / "feed.xml").exists())
             self.assertTrue((site / "index.html").exists())
             # 没有 .nojekyll 的话 Pages 会拿 Jekyll 处理 docs/，下划线开头的资源被吞

@@ -23,7 +23,7 @@ class TempRoot:
             mock.patch.object(config, "STATE_FILE", root / "content" / "state.json"),
             # SITE_DIR 是 import 时按 ROOT 算好的常量，不跟着 ROOT 走，得单独顶掉，
             # 否则 write_feed 会把测试产物写进真实仓库的 docs/
-            mock.patch.object(config, "SITE_DIR", root / "docs"),
+            mock.patch.object(config, "SITE_DIR", root / ".site"),
         ]
         for p in self._patches:
             p.start()
@@ -128,15 +128,15 @@ class TestPackagingChain(unittest.TestCase):
             self.assertIn("EP2 | OpenAI 一周快讯", xml)
             self.assertIn('type="audio/mpeg"', xml)
             self.assertIn("length=\"4096\"", xml)
-            # 音频 enclosure 必须指向 Release 附件，且用集号命名
+            # 音频 enclosure 指向 Pages 站点下的 audio/，按集号命名
             self.assertIn(f"{config.AUDIO_BASE_URL}/EP1.mp3", xml)
             self.assertIn(f"{config.AUDIO_BASE_URL}/EP2.mp3", xml)
-            self.assertNotIn("github.io/chatgpt-fm/audio", xml)
+            self.assertNotIn("/releases/download/", xml)
 
             out, n = feed.write_feed()
             self.assertEqual(n, 2)
             self.assertTrue(out.exists())
-            self.assertEqual(out, root / "docs" / "feed.xml")   # 写进 Pages 目录
+            self.assertEqual(out, root / ".site" / "feed.xml")   # 写进站点构建目录
 
     def test_feed_skips_episodes_without_audio(self):
         with TempRoot():

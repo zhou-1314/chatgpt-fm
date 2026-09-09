@@ -2,7 +2,7 @@
 
   chatgpt-fm discover                      列出各源文章数与新文章
   chatgpt-fm run [--source X] [--limit N] [--url URL]   端到端流水线
-  chatgpt-fm publish                       发布到 GitHub（音频→Release，feed→Pages）
+  chatgpt-fm publish                       发布到 GitHub Pages（站点→gh-pages 分支）
   chatgpt-fm voices                        生成音色试听样品
   chatgpt-fm status                        显示各篇进度
 """
@@ -406,8 +406,8 @@ def cmd_weekly(args) -> None:
     print("\n========== 刷新 RSS 与目录 ==========", flush=True)
     cmd_feed(None)
     cmd_catalog(None)
-    print("\n✅ 本周更新完成。接着跑 `chatgpt-fm publish` 把音频传到 Release、"
-          "刷新 docs/ 下的 feed 与目录页。", flush=True)
+    print("\n✅ 本周更新完成。接着跑 `chatgpt-fm publish` 把站点（feed + 目录页 + 音频）"
+          "推到 gh-pages 分支。", flush=True)
 
 
 def cmd_catalog(args) -> None:
@@ -427,33 +427,39 @@ def cmd_feed(args) -> None:
 
 
 def cmd_publish(args) -> None:
-    """发布到 GitHub：音频传 Release 附件，feed.xml + 目录页写进 docs/ 供 Pages 提供。"""
+    """发布到 GitHub Pages：站点（feed + 目录页 + 封面 + 音频）推到 gh-pages 分支。"""
     from . import publish
 
-    tag = args.tag or config.AUDIO_RELEASE_TAG
-    print(f"仓库：{config.GITHUB_OWNER}/{config.GITHUB_REPO}  ·  音频 Release：{tag}")
+    branch = args.branch or config.PAGES_BRANCH
+    print(f"仓库：{config.GITHUB_OWNER}/{config.GITHUB_REPO}  ·  站点分支：{branch}")
     if args.dry_run:
-        print("（--dry-run：只列要做什么，不真的上传）")
+        print("（--dry-run：只构建本地站点，不推送）")
 
-    print("\n[1/2] 同步音频到 Release 附件")
+    print("\n[1/3] 生成 feed 与目录页")
+    site, n = publish.write_site()
+    print(f"      {site.name}/feed.xml     （{n} 集）")
+    print(f"      {site.name}/index.html")
+
+    print("\n[2/3] 同步音频到站点")
+    copied, skipped = publish.sync_audio(site, dry_run=args.dry_run)
+    total_mb = sum(f.stat().st_size for f in (site / "audio").glob("*.mp3")) / 1024 / 1024 \
+        if (site / "audio").exists() else 0
+    print(f"      新增/更新 {copied} 个，跳过 {skipped} 个 · 站点音频共 {total_mb:.0f} MB")
+    if total_mb > 900:
+        print(f"      ⚠️ 接近 GitHub Pages 的 1GB 站点上限，该把音频挪到对象存储了"
+              f"（改 AUDIO_BASE_URL 即可）", file=sys.stderr)
+
+    if args.dry_run:
+        print(f"\n本地站点已就绪：{site}")
+        return
+
+    print(f"\n[3/3] 推送到 {branch} 分支")
     try:
-        uploaded, skipped = publish.upload_audio(tag, dry_run=args.dry_run)
+        print("      " + publish.push_site(site, branch, f"发布站点：{n} 集"))
     except publish.GitHubCliError as e:
         print(f"  ❌ {e}", file=sys.stderr)
-        print("  提示：先确认 `gh auth status` 已登录，且仓库已经创建。", file=sys.stderr)
         return
-    if uploaded or skipped:
-        print(f"      上传 {uploaded} 个，跳过 {skipped} 个（已是最新）")
-    else:
-        print("      本地还没有已打包的音频，跳过。")
 
-    print("\n[2/2] 生成 Pages 站点")
-    site, n = publish.write_site()
-    print(f"      {site.relative_to(config.ROOT)}/feed.xml     （{n} 集）")
-    print(f"      {site.relative_to(config.ROOT)}/index.html")
-
-    print("\n提交并推送 docs/ 后生效：")
-    print(f"  git add docs && git commit -m 'update feed' && git push")
     print(f"\n订阅地址：{config.FEED_BASE_URL}/feed.xml")
     print(f"目录页　：{config.FEED_BASE_URL}/")
 
@@ -512,9 +518,9 @@ def main() -> None:
     p = sub.add_parser("feed", help="生成播客 RSS docs/feed.xml")
     p.set_defaults(func=cmd_feed)
 
-    p = sub.add_parser("publish", help="发布到 GitHub：音频传 Release，feed + 目录页进 docs/")
-    p.add_argument("--tag", help=f"音频 Release 的 tag（默认 {config.AUDIO_RELEASE_TAG}）")
-    p.add_argument("--dry-run", action="store_true", help="只列要上传什么，不真的传")
+    p = sub.add_parser("publish", help="发布到 GitHub Pages：站点推到 gh-pages 分支")
+    p.add_argument("--branch", help=f"站点分支（默认 {config.PAGES_BRANCH}）")
+    p.add_argument("--dry-run", action="store_true", help="只构建本地站点，不推送")
     p.set_defaults(func=cmd_publish)
 
     p = sub.add_parser("catalog", help="生成全集目录 CATALOG.md 并刷新 README 集数")
