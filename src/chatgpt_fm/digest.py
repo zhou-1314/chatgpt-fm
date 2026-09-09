@@ -167,7 +167,8 @@ def _interpret_week(week: dict) -> dict:
 def _write_episode(week: dict, episode_no: int, episode_title: str,
                    shownotes: str, duration_sec: float) -> None:
     minutes, seconds = divmod(int(duration_sec), 60)
-    mp3 = config.audio_path(config.DIGEST_SOURCE, week["slug"])
+    # 同 episode.py：相对路径，不泄露本机目录结构
+    mp3 = config.audio_path(config.DIGEST_SOURCE, week["slug"]).relative_to(config.ROOT)
     src_lines = []
     for meta, _ in week["items"]:
         src_lines.append(f"- {meta.get('published', '?')}  {meta.get('title', '')}\n  {meta.get('url', '')}")

@@ -160,3 +160,24 @@ class TestPackagingChain(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEpisodePathIsRelative(unittest.TestCase):
+    """上传包会随仓库公开，里面不该出现本机绝对路径。"""
+
+    def test_article_episode_uses_repo_relative_path(self):
+        with TempRoot() as root:
+            _make_episode("engineering", "2026-02-11-A", 1, "甲")
+            text = config.episode_path("engineering", "2026-02-11-A").read_text(encoding="utf-8")
+            self.assertIn("content/openai/engineering/audio/", text)
+            self.assertNotIn(str(root), text)
+
+    def test_digest_episode_uses_repo_relative_path(self):
+        with TempRoot() as root:
+            from chatgpt_fm import digest
+            config.ensure_source_dirs(config.DIGEST_SOURCE)
+            week = {"slug": "2026-02-08-OpenAI一周快讯", "label": "某周", "items": []}
+            digest._write_episode(week, 2, "快讯", "简介", 300.0)
+            text = config.episode_path(config.DIGEST_SOURCE, week["slug"]).read_text(encoding="utf-8")
+            self.assertIn("content/openai/news/audio/", text)
+            self.assertNotIn(str(root), text)

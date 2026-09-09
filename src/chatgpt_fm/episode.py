@@ -14,7 +14,8 @@ def write_episode(
     source = article_meta.get("source", "")
     minutes, seconds = divmod(int(duration_sec), 60)
     title = f"EP{episode_no} | {episode_title}"
-    mp3 = config.audio_path(source, slug)
+    # 相对仓库根，别把本机目录结构写进会公开的上传包里
+    mp3 = config.audio_path(source, slug).relative_to(config.ROOT)
     body = f"""# {title}
 
 - 音频文件：`{mp3}`
