@@ -14,6 +14,25 @@
 <itunes:owner><itunes:name>ChatGPT FM</itunes:name><itunes:email>liguangpeng9495@gmail.com</itunes:email></itunes:owner>
 <image><url>https://zhou-1314.github.io/chatgpt-fm/cover.jpg</url><title>ChatGPT FM</title><link>https://zhou-1314.github.io/chatgpt-fm</link></image>
 <atom:link href="https://zhou-1314.github.io/chatgpt-fm/feed.xml" rel="self" type="application/rss+xml"/>
-<lastBuildDate>Wed, 09 Sep 2026 02:09:35 +0000</lastBuildDate>
+<lastBuildDate>Wed, 09 Sep 2026 03:43:00 +0000</lastBuildDate>
+<item>
+<title>EP1 · 2026-08-25 | OpenAI 首款自研芯片 Jalapeño 实测：推理效率与速度全面刷新行业基准</title>
+<itunes:title>EP1 · 2026-08-25 | OpenAI 首款自研芯片 Jalapeño 实测：推理效率与速度全面刷新行业基准</itunes:title>
+<itunes:episode>1</itunes:episode>
+<description><![CDATA[本期聊的是 OpenAI 于 2026 年 8 月 25 日公布的首块自研推理芯片 Jalapeño 首批实测数据。这不只是一次硬件发布，它代表 OpenAI 正式走上全栈垂直整合路线，同时也是 AI 加速 AI 基础设施开发的真实案例。数据显示，Jalapeño 在效率与速度两个维度同时领先对比系统，打破了两者通常需要权衡取舍的惯例。
+
+- OpenAI 首块自研推理芯片 Jalapeño 公布测试结果，每瓦吞吐量领先对比系统 1.5 到 1.9 倍
+- 端到端延迟降低 1.7 到 3.6 倍，对 agent 多步连续推理场景影响最为显著
+- 跨三个来自不同机构的公开大模型测试：GPT-OSS 一百二十 B、DeepSeek R 一和 Kimi K 二点五
+- 芯片从设计到流片仅用九个月，AI 工具在设计与优化全程发挥关键作用
+- AI 生成内核代码在特定模块上比人类专家代码快 1.5 到 1.8 倍
+- Jalapeño 是多代芯片平台的起点，第二代已深度开发中，计划年底前开始规模部署]]></description>
+<content:encoded><![CDATA[本期聊的是 OpenAI 于 2026 年 8 月 25 日公布的首块自研推理芯片 Jalapeño 首批实测数据。这不只是一次硬件发布，它代表 OpenAI 正式走上全栈垂直整合路线，同时也是 AI 加速 AI 基础设施开发的真实案例。数据显示，Jalapeño 在效率与速度两个维度同时领先对比系统，打破了两者通常需要权衡取舍的惯例。<br/><br/>- OpenAI 首块自研推理芯片 Jalapeño 公布测试结果，每瓦吞吐量领先对比系统 1.5 到 1.9 倍<br/>- 端到端延迟降低 1.7 到 3.6 倍，对 agent 多步连续推理场景影响最为显著<br/>- 跨三个来自不同机构的公开大模型测试：GPT-OSS 一百二十 B、DeepSeek R 一和 Kimi K 二点五<br/>- 芯片从设计到流片仅用九个月，AI 工具在设计与优化全程发挥关键作用<br/>- AI 生成内核代码在特定模块上比人类专家代码快 1.5 到 1.8 倍<br/>- Jalapeño 是多代芯片平台的起点，第二代已深度开发中，计划年底前开始规模部署]]></content:encoded>
+<pubDate>Tue, 25 Aug 2026 08:00:01 +0000</pubDate>
+<enclosure url="https://github.com/zhou-1314/chatgpt-fm/releases/download/audio/EP1.mp3" length="9615888" type="audio/mpeg"/>
+<guid isPermaLink="false">engineering/2026-08-25-Jalapeño’s first results show industry-leading speed and efficiency in AI inference</guid>
+<itunes:duration>26:42</itunes:duration>
+<itunes:explicit>false</itunes:explicit>
+</item>
 </channel>
 </rss>

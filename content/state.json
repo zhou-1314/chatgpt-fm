@@ -1,0 +1,39 @@
+{
+  "next_episode": 2,
+  "articles": {
+    "https://openai.com/index/jalapeno-first-results": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "engineering",
+      "slug": "2026-08-25-Jalapeño’s first results show industry-leading speed and efficiency in AI inference",
+      "title": "Jalapeño’s first results show industry-leading speed and efficiency in AI inference",
+      "published": "2026-08-25",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1602.6,
+      "episode": 1
+    },
+    "https://openai.com/index/harness-engineering": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2026-02-11-Harness engineering - leveraging Codex in an agent-first world",
+      "title": "Harness engineering: leveraging Codex in an agent-first world",
+      "published": "2026-02-11"
+    },
+    "https://openai.com/index/continuous-voice-interaction-with-gpt-live": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "engineering",
+      "slug": "2026-08-03-How we built a realtime system for responsive voice AI in six months",
+      "title": "How we built a realtime system for responsive voice AI in six months",
+      "published": "2026-08-03"
+    }
+  },
+  "voice_rotation": 1
+}
