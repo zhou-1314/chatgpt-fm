@@ -214,6 +214,11 @@ FEED_BASE_URL = _env(
 # 音频前缀：站点下的 audio/ 子目录
 AUDIO_BASE_URL = _env("AUDIO_BASE_URL", f"{FEED_BASE_URL}/audio")
 
+# 站点能放多少音频（MB）。Pages 单站点硬上限 1GB，留点余量给 feed/目录页/封面。
+# 超出预算的集不上传：音频全量留在本地 content/**/audio/，站点只挂各源最新的几集，
+# 文字稿则不受限制、全部随仓库保留。
+SITE_AUDIO_BUDGET_MB = int(_env("SITE_AUDIO_BUDGET_MB", "900"))
+
 # 本地站点构建目录（不入库，publish 时同步到 gh-pages 分支）
 SITE_DIR = ROOT / ".site"
 # 封面源图放在仓库里，publish 时复制进站点

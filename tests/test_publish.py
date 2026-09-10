@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from chatgpt_fm import config, publish
+from chatgpt_fm import config, publish, state
 from tests.test_packaging import TempRoot, _make_episode
 
 
@@ -68,8 +68,8 @@ class TestSyncAudio(unittest.TestCase):
             _make_episode("engineering", "2026-02-11-A", 1, "甲", audio_bytes=b"x" * 4096)
             site = root / "site"
             with mock.patch.object(publish.state, "load", return_value=self.ST):
-                copied, skipped = publish.sync_audio(site)
-            self.assertEqual((copied, skipped), (1, 0))
+                r = publish.sync_audio(site)
+            self.assertEqual((r["copied"], r["skipped"]), (1, 0))
             dest = site / "audio" / "EP1.mp3"
             self.assertTrue(dest.exists())
             self.assertEqual(dest.stat().st_size, 4096)
@@ -80,9 +80,9 @@ class TestSyncAudio(unittest.TestCase):
             site = root / "site"
             with mock.patch.object(publish.state, "load", return_value=self.ST):
                 publish.sync_audio(site)
-                copied, skipped = publish.sync_audio(site)   # 第二次
+                r = publish.sync_audio(site)   # 第二次
             # 同名同大小不该重复复制，否则几百集每次 publish 都会让 git 认为全变了
-            self.assertEqual((copied, skipped), (0, 1))
+            self.assertEqual((r["copied"], r["skipped"]), (0, 1))
 
     def test_resynthesised_audio_is_replaced(self):
         with TempRoot() as root:
@@ -92,8 +92,8 @@ class TestSyncAudio(unittest.TestCase):
                 publish.sync_audio(site)
                 # 重新合成，大小变了
                 config.audio_path("engineering", "2026-02-11-A").write_bytes(b"y" * 8192)
-                copied, skipped = publish.sync_audio(site)
-            self.assertEqual((copied, skipped), (1, 0))
+                r = publish.sync_audio(site)
+            self.assertEqual((r["copied"], r["skipped"]), (1, 0))
             self.assertEqual((site / "audio" / "EP1.mp3").stat().st_size, 8192)
 
     def test_dry_run_writes_nothing(self):
@@ -101,8 +101,8 @@ class TestSyncAudio(unittest.TestCase):
             _make_episode("engineering", "2026-02-11-A", 1, "甲")
             site = root / "site"
             with mock.patch.object(publish.state, "load", return_value=self.ST):
-                copied, _ = publish.sync_audio(site, dry_run=True)
-            self.assertEqual(copied, 1)
+                r = publish.sync_audio(site, dry_run=True)
+            self.assertEqual(r["copied"], 1)
             self.assertFalse((site / "audio").exists())
 
 
@@ -286,3 +286,113 @@ class TestAlreadyFetchedShellPage(unittest.TestCase):
         self.assertFalse(done)
         interp.assert_not_called()            # 关键：没有白花一次模型调用
         self.assertIn("skipped", st["articles"][ref.url])
+
+
+class TestBudgetSelection(unittest.TestCase):
+    """站点容量有限（Pages 1GB），只能挂各源最新的几集。各源必须都有代表，
+    否则集数多的源（research 两百多集）会把整个站点淹掉。"""
+
+    @staticmethod
+    def _eps(spec, size=10):
+        """spec: {源名: [集号...]}；每集 size MB。"""
+        out = []
+        for src, eps in spec.items():
+            for ep in eps:
+                m = mock.MagicMock()
+                m.stat.return_value.st_size = size * 1024 * 1024
+                out.append({"ep": ep, "source": src, "slug": f"s{ep}", "path": m})
+        return out
+
+    def test_everything_fits_when_budget_is_ample(self):
+        from chatgpt_fm import publish
+        eps = self._eps({"engineering": [1, 2], "research": [3, 4]})
+        sel, used = publish.select_within_budget(eps, 1000 * 1024 * 1024)
+        self.assertEqual({e["ep"] for e in sel}, {1, 2, 3, 4})
+        self.assertAlmostEqual(used / 1024 / 1024, 40)
+
+    def test_newest_are_kept_within_each_source(self):
+        from chatgpt_fm import publish
+        eps = self._eps({"engineering": [1, 2, 3], "research": [10, 11, 12]})
+        # 40MB 预算 / 每集 10MB = 4 集，轮流取 → 各源最新 2 集
+        sel, _ = publish.select_within_budget(eps, 40 * 1024 * 1024)
+        self.assertEqual({e["ep"] for e in sel}, {2, 3, 11, 12})
+
+    def test_large_source_does_not_crowd_out_small_one(self):
+        from chatgpt_fm import publish
+        # research 200 集、engineering 只有 2 集；预算只够 4 集
+        eps = self._eps({"engineering": [1, 2], "research": list(range(100, 300))})
+        sel, _ = publish.select_within_budget(eps, 40 * 1024 * 1024)
+        by_src = {}
+        for e in sel:
+            by_src.setdefault(e["source"], []).append(e["ep"])
+        self.assertIn("engineering", by_src)      # 小源必须有代表
+        self.assertEqual(sorted(by_src["engineering"]), [1, 2])
+        self.assertEqual(len(sel), 4)
+
+    def test_exhausted_source_leaves_budget_to_others(self):
+        from chatgpt_fm import publish
+        # engineering 只有 1 集，剩下的预算应该全给 research，而不是浪费
+        eps = self._eps({"engineering": [1], "research": [10, 11, 12, 13]})
+        sel, _ = publish.select_within_budget(eps, 40 * 1024 * 1024)
+        self.assertEqual(len(sel), 4)
+        self.assertEqual(sorted(e["ep"] for e in sel), [1, 11, 12, 13])
+
+    def test_zero_budget_selects_nothing(self):
+        from chatgpt_fm import publish
+        sel, used = publish.select_within_budget(self._eps({"a": [1, 2]}), 0)
+        self.assertEqual(sel, [])
+        self.assertEqual(used, 0)
+
+    def test_result_is_deterministic(self):
+        from chatgpt_fm import publish
+        eps = self._eps({"b": [5, 6], "a": [1, 2], "c": [8, 9]})
+        a, _ = publish.select_within_budget(eps, 30 * 1024 * 1024)
+        b, _ = publish.select_within_budget(eps, 30 * 1024 * 1024)
+        self.assertEqual([e["ep"] for e in a], [e["ep"] for e in b])
+
+
+class TestRollingWindowCleanup(unittest.TestCase):
+    def test_episodes_falling_out_of_window_are_removed_from_site(self):
+        from chatgpt_fm import publish
+        with TempRoot() as root:
+            for ep, slug in ((1, "2026-01-01-A"), (2, "2026-02-01-B")):
+                _make_episode("engineering", slug, ep, f"第{ep}集", audio_bytes=b"x" * 4096)
+            st = {"next_episode": 3, "articles": {
+                "u1": {"stages": {"packaged": True}, "source": "engineering",
+                       "slug": "2026-01-01-A", "episode": 1},
+                "u2": {"stages": {"packaged": True}, "source": "engineering",
+                       "slug": "2026-02-01-B", "episode": 2}}, "digests": {}}
+            site = root / "site"
+            with mock.patch.object(publish.state, "load", return_value=st):
+                # 预算足够，两集都上
+                r = publish.sync_audio(site)
+                self.assertEqual(r["eps"], {1, 2})
+                # 预算收紧到只装得下一集 → 老的那集必须从站点撤掉
+                with mock.patch.object(config, "SITE_AUDIO_BUDGET_MB", 4096 / 1024 / 1024):
+                    r = publish.sync_audio(site)
+            self.assertEqual(r["eps"], {2})
+            self.assertEqual(r["removed"], 1)
+            self.assertFalse((site / "audio" / "EP1.mp3").exists())
+            self.assertTrue((site / "audio" / "EP2.mp3").exists())
+            # 本地音频不能被动
+            self.assertTrue(config.audio_path("engineering", "2026-01-01-A").exists())
+
+
+class TestFeedOnlyIncludesPlayable(unittest.TestCase):
+    """滚动窗口之外的集不能进 feed，否则 enclosure 404、客户端直接报错。"""
+
+    def test_feed_skips_episodes_without_site_audio(self):
+        from chatgpt_fm import feed
+        with TempRoot():
+            for ep, slug in ((1, "2026-01-01-A"), (2, "2026-02-01-B")):
+                _make_episode("engineering", slug, ep, f"第{ep}集")
+            state.save({"next_episode": 3, "articles": {
+                "u1": {"stages": {"packaged": True}, "source": "engineering",
+                       "slug": "2026-01-01-A", "published": "2026-01-01", "episode": 1},
+                "u2": {"stages": {"packaged": True}, "source": "engineering",
+                       "slug": "2026-02-01-B", "published": "2026-02-01", "episode": 2}}})
+            self.assertEqual(feed.build_feed().count("<item>"), 2)          # 不限时全收
+            xml = feed.build_feed(only_eps={2})
+            self.assertEqual(xml.count("<item>"), 1)
+            self.assertIn("EP2", xml)
+            self.assertNotIn("audio/EP1.mp3", xml)

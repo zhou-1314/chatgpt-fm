@@ -7,6 +7,12 @@ from chatgpt_fm import config, interpret
 from tests.test_packaging import TempRoot
 
 
+def _body(chars: int = 15000) -> str:
+    """真实量级的英文原文。实测抓到的原文是 4000-22000 字符；
+    太短会触发防编造校验（那正是它该做的事）。"""
+    return "x" * chars
+
+
 def _raw(script: str, title: str = "标题") -> str:
     return (f"===EPISODE_TITLE===\n{title}\n"
             f"===SHOWNOTES===\n简介\n\n- 要点\n"
@@ -67,7 +73,7 @@ class TestInterpretWriting(unittest.TestCase):
             config.ensure_source_dirs("engineering")
             long_script = "正" * (interpret.MIN_HAN_CHARS + 100)
             with mock.patch.object(interpret, "run_llm", return_value=_raw(long_script)) as m:
-                interpret.interpret(self.META, "English body", "2026-02-11-T")
+                interpret.interpret(self.META, _body(), "2026-02-11-T")
             self.assertEqual(m.call_count, 1)  # 够长，不该触发重写
             text = config.script_path("engineering", "2026-02-11-T").read_text(encoding="utf-8")
             self.assertIn("episode_title: 标题", text)
@@ -81,7 +87,7 @@ class TestInterpretWriting(unittest.TestCase):
             longer = "长" * (interpret.MIN_HAN_CHARS + 500)
             with mock.patch.object(interpret, "run_llm",
                                    side_effect=[_raw(short), _raw(longer)]) as m:
-                got = interpret.interpret(self.META, "body", "2026-02-11-T")
+                got = interpret.interpret(self.META, _body(), "2026-02-11-T")
             self.assertEqual(m.call_count, 2)
             self.assertGreater(interpret.han_count(got["script"]), interpret.MIN_HAN_CHARS)
 
@@ -91,7 +97,7 @@ class TestInterpretWriting(unittest.TestCase):
             good = _raw("正" * (interpret.MIN_HAN_CHARS + 10))
             with mock.patch.object(interpret, "run_llm",
                                    side_effect=["no markers at all", good]) as m:
-                interpret.interpret(self.META, "body", "2026-02-11-T")
+                interpret.interpret(self.META, _body(), "2026-02-11-T")
             self.assertEqual(m.call_count, 2)
 
     def test_session_limit_is_not_swallowed(self):
@@ -101,7 +107,7 @@ class TestInterpretWriting(unittest.TestCase):
             with mock.patch.object(interpret, "run_llm",
                                    side_effect=interpret.SessionLimitError("limit", "4pm")):
                 with self.assertRaises(interpret.SessionLimitError):
-                    interpret.interpret(self.META, "body", "2026-02-11-T")
+                    interpret.interpret(self.META, _body(), "2026-02-11-T")
 
 
 if __name__ == "__main__":
@@ -162,3 +168,40 @@ class TestSecondsUntilReset(unittest.TestCase):
     def test_no_information_falls_back_to_an_hour(self):
         from chatgpt_fm import cli
         self.assertEqual(cli._seconds_until_reset("", None), 3600)
+
+
+class TestFabricationGuard(unittest.TestCase):
+    """原文寥寥几百字却产出六七千汉字，只能是模型自己编的。
+
+    真实事故：两篇只有导航栏的壳页（原文 550 / 481 字符）被送进模型，
+    模型没有拒绝，而是凭标题编出了 6103 / 6359 汉字的「深度解读」，
+    里面的 SWE-bench 分数、.cursorrules 写法全是虚构的。
+    """
+
+    META = {"title": "T", "url": "https://openai.com/index/t",
+            "source": "engineering", "published": "2026-02-11"}
+
+    def test_wild_expansion_is_rejected(self):
+        with TempRoot():
+            config.ensure_source_dirs("engineering")
+            script = "编" * 6100
+            with mock.patch.object(interpret, "run_llm", return_value=_raw(script)):
+                with self.assertRaises(interpret.FabricationError) as cm:
+                    interpret.interpret(self.META, "x" * 550, "2026-02-11-T")
+            self.assertIn("膨胀", str(cm.exception))
+            # 不能落盘
+            self.assertFalse(config.script_path("engineering", "2026-02-11-T").exists())
+
+    def test_normal_expansion_passes(self):
+        with TempRoot():
+            config.ensure_source_dirs("engineering")
+            # 实测正常范围 0.26-1.91，这里约 0.47
+            script = "正" * 7000
+            with mock.patch.object(interpret, "run_llm", return_value=_raw(script)):
+                got = interpret.interpret(self.META, "x" * 15000, "2026-02-11-T")
+            self.assertEqual(interpret.han_count(got["script"]), 7000)
+            self.assertTrue(config.script_path("engineering", "2026-02-11-T").exists())
+
+    def test_threshold_leaves_room_above_observed_maximum(self):
+        # 实测正常最高 1.91；阈值必须明显高于它，否则会误杀
+        self.assertGreater(interpret.MAX_EXPANSION_RATIO, 1.91 * 1.5)

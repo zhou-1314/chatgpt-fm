@@ -13,15 +13,21 @@ from xml.sax.saxutils import escape
 from . import config, state
 
 
-def _collect(st: dict) -> list[dict]:
+def _collect(st: dict, only_eps: set[int] | None = None) -> list[dict]:
+    """收集要进 RSS 的集。only_eps 给定时只收这些集号——站点是滚动窗口，
+    音频没上站的集不能进 feed，否则 enclosure 会 404、客户端直接报错。"""
     items = []
     for a in st["articles"].values():
         if a["stages"].get("packaged") and "episode" in a:
+            if only_eps is not None and a["episode"] not in only_eps:
+                continue
             m = _meta(a["source"], a)
             if m:
                 items.append(m)
     for d in st.get("digests", {}).values():
         if d["stages"].get("packaged") and "episode" in d:
+            if only_eps is not None and d["episode"] not in only_eps:
+                continue
             m = _meta(config.DIGEST_SOURCE, d)
             if m:
                 items.append(m)
@@ -78,9 +84,9 @@ def _cdata(text: str) -> str:
     return f"<![CDATA[{safe}]]>"
 
 
-def build_feed() -> str:
+def build_feed(only_eps: set[int] | None = None) -> str:
     st = state.load()
-    items = _collect(st)
+    items = _collect(st, only_eps)
     now = format_datetime(datetime.now(timezone.utc))
     parts = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -125,9 +131,9 @@ def build_feed() -> str:
     return "\n".join(parts)
 
 
-def write_feed() -> tuple:
-    """写到 Pages 发布目录 docs/feed.xml，随仓库一起提交。"""
-    xml = build_feed()
+def write_feed(only_eps: set[int] | None = None) -> tuple:
+    """写出站点的 feed.xml。only_eps 限定只收音频已上站的那些集。"""
+    xml = build_feed(only_eps)
     config.SITE_DIR.mkdir(parents=True, exist_ok=True)
     out = config.SITE_DIR / "feed.xml"
     out.write_text(xml, encoding="utf-8")

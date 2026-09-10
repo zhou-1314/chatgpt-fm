@@ -46,16 +46,65 @@ def collect_audio(st: dict) -> list[dict]:
     return out
 
 
-def sync_audio(site_dir: Path, dry_run: bool = False) -> tuple[int, int]:
-    """把本地音频按集号复制进站点的 audio/。返回 (新增或更新数, 跳过数)。
+def select_within_budget(episodes: list[dict], budget_bytes: int) -> tuple[list[dict], int]:
+    """在容量预算内挑出要上站的集：各源轮流取最新的一集，直到装不下。
 
-    同名同大小就跳过——几百集全量复制一遍既慢又会让 git 认为文件都变了。
+    为什么轮流取而不是全局按时间取：research 有两百多集、engineering 只有三十几集，
+    全局取最新的话整个站点会被 research 淹掉，其他源一集都上不去。轮流取能保证
+    每个源都有代表；某个源取完了就跳过它，预算继续给别人用，不会浪费。
+
+    返回 (选中的集, 占用字节数)。
+    """
+    by_source: dict[str, list[dict]] = {}
+    for e in episodes:
+        by_source.setdefault(e["source"], []).append(e)
+    for lst in by_source.values():
+        lst.sort(key=lambda x: x["ep"], reverse=True)   # 新集在前
+
+    order = sorted(by_source)                # 固定顺序，保证结果可复现
+    cursor = {s: 0 for s in order}
+    selected: list[dict] = []
+    used = 0
+    while True:
+        progressed = False
+        for s in order:
+            i = cursor[s]
+            if i >= len(by_source[s]):
+                continue
+            e = by_source[s][i]
+            size = e["path"].stat().st_size
+            if used + size > budget_bytes:
+                # 这个源的下一集已经装不下了，别再往后试——否则会跳过一集去拿
+                # 更小的老集，破坏「最新的连续几集」这个语义
+                cursor[s] = len(by_source[s])
+                continue
+            selected.append(e)
+            used += size
+            cursor[s] = i + 1
+            progressed = True
+        if not progressed:
+            break
+    selected.sort(key=lambda x: x["ep"])
+    return selected, used
+
+
+def sync_audio(site_dir: Path, dry_run: bool = False) -> dict:
+    """把预算内的音频按集号复制进站点的 audio/，并清掉落选的。
+
+    返回 {"eps": 选中的集号集合, "copied", "skipped", "removed", "used_mb", "left_out"}。
+    同名同大小就跳过——几百集全量复制一遍既慢，又会让 git 认为文件都变了。
     """
     audio_dir = site_dir / "audio"
     if not dry_run:
         audio_dir.mkdir(parents=True, exist_ok=True)
-    copied = skipped = 0
-    for e in collect_audio(state.load()):
+
+    all_eps = collect_audio(state.load())
+    budget = config.SITE_AUDIO_BUDGET_MB * 1024 * 1024
+    selected, used = select_within_budget(all_eps, budget)
+    keep = {config.audio_asset_name(e["ep"]) for e in selected}
+
+    copied = skipped = removed = 0
+    for e in selected:
         dest = audio_dir / config.audio_asset_name(e["ep"])
         size = e["path"].stat().st_size
         if dest.exists() and dest.stat().st_size == size:
@@ -65,7 +114,23 @@ def sync_audio(site_dir: Path, dry_run: bool = False) -> tuple[int, int]:
         if not dry_run:
             shutil.copyfile(e["path"], dest)
         copied += 1
-    return copied, skipped
+
+    # 滚动窗口往前挪之后，落选的老集要从站点撤下来，否则站点只会越来越大
+    if audio_dir.exists():
+        for f in sorted(audio_dir.glob("*.mp3")):
+            if f.name not in keep:
+                print(f"  - {f.name:<12} 移出站点（滚动窗口之外，本地仍保留）")
+                if not dry_run:
+                    f.unlink()
+                removed += 1
+
+    return {
+        "eps": {e["ep"] for e in selected},
+        "copied": copied, "skipped": skipped, "removed": removed,
+        "used_mb": used / 1024 / 1024,
+        "left_out": len(all_eps) - len(selected),
+        "total": len(all_eps),
+    }
 
 
 # ── 推送到 gh-pages 分支 ─────────────────────────────────────────────────
@@ -153,9 +218,13 @@ footer { margin-top:3em; padding-top:1.4em; border-top:1px solid var(--line); co
 """
 
 
-def build_index(by_src: dict) -> str:
-    """用 catalog 的分组数据渲染 Pages 首页。"""
+def build_index(by_src: dict, only_eps: set[int] | None = None) -> str:
+    """用 catalog 的分组数据渲染 Pages 首页。
+
+    only_eps 之外的集只列文字稿、不给音频链接——它们的音频没上站，链过去是 404。
+    """
     total = sum(len(v) for v in by_src.values())
+    playable = len(only_eps) if only_eps is not None else total
     parts = [
         "<!doctype html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\">",
         '<meta name="viewport" content="width=device-width,initial-scale=1">',
@@ -166,7 +235,10 @@ def build_index(by_src: dict) -> str:
         f"<style>{_INDEX_CSS}</style></head><body><div class=\"wrap\">",
         f"<h1>{escape(config.PODCAST_TITLE)} 📻</h1>",
         '<p class="tagline">把 OpenAI 官网发布的技术博客，转成中文音频解读。'
-        f"目前共 <strong>{total}</strong> 集。</p>",
+        f"目前共 <strong>{total}</strong> 集"
+        + (f"，其中最新 <strong>{playable}</strong> 集可在线收听"
+           f"（受托管容量限制，更早的集只提供文字稿）。</p>"
+           if playable < total else "。</p>"),
         '<div class="sub"><strong>用任意播客 App 订阅</strong>（小宇宙、Apple Podcasts、'
         f'Pocket Casts…）：<code>{config.FEED_BASE_URL}/feed.xml</code></div>',
     ]
@@ -176,7 +248,9 @@ def build_index(by_src: dict) -> str:
             continue
         parts.append(f"<h2>{escape(src['label'])}（{len(items)}）</h2><ul>")
         for e in sorted(items, key=lambda x: (x["date"], x["ep"]), reverse=True):
-            links = [f'<a href="{config.audio_url(e["ep"])}">音频</a>']
+            links = []
+            if only_eps is None or e["ep"] in only_eps:
+                links.append(f'<a href="{config.audio_url(e["ep"])}">音频</a>')
             # catalog 给的是 quote 过的仓库相对路径，直接拼成 GitHub 网页地址
             links.insert(0, f'<a href="https://github.com/{_repo()}/blob/main/{e["link"]}">中文稿</a>')
             if e.get("article"):
@@ -203,17 +277,22 @@ def build_index(by_src: dict) -> str:
     return "\n".join(parts)
 
 
-def write_site() -> tuple[Path, int]:
-    """生成站点：feed.xml、index.html、封面、.nojekyll。返回 (站点目录, 集数)。"""
+def write_site(only_eps: set[int] | None = None) -> tuple[Path, int]:
+    """生成站点：feed.xml、index.html、封面、.nojekyll。返回 (站点目录, feed 集数)。
+
+    only_eps 是音频已上站的集号；feed 只收这些，目录页则列出全部（文字稿都在，
+    只是站外的集不显示音频链接）。
+    """
     from . import catalog, feed
 
     config.SITE_DIR.mkdir(parents=True, exist_ok=True)
     # 顺手刷新 CATALOG.md 与 README 进度：发布了却忘了更新目录，
     # 结果就是 README 上永远写着 0 集
     catalog.build_catalog()
-    _, n = feed.write_feed()
+    _, n = feed.write_feed(only_eps)
     by_src = catalog._all(state.load())
-    (config.SITE_DIR / "index.html").write_text(build_index(by_src), encoding="utf-8")
+    (config.SITE_DIR / "index.html").write_text(
+        build_index(by_src, only_eps), encoding="utf-8")
     # 没有这个文件 Pages 会用 Jekyll 处理站点，下划线开头的资源会被吞掉
     (config.SITE_DIR / ".nojekyll").touch()
     if config.COVER_SOURCE.exists():

@@ -443,27 +443,37 @@ def cmd_feed(args) -> None:
 
 
 def cmd_publish(args) -> None:
-    """发布到 GitHub Pages：站点（feed + 目录页 + 封面 + 音频）推到 gh-pages 分支。"""
+    """发布到 GitHub Pages：站点（feed + 目录页 + 封面 + 音频）推到 gh-pages 分支。
+
+    音频受 Pages 容量限制，只挂各源最新的几集（滚动窗口）；本地音频全量保留。
+    """
     from . import publish
 
     branch = args.branch or config.PAGES_BRANCH
-    print(f"仓库：{config.GITHUB_OWNER}/{config.GITHUB_REPO}  ·  站点分支：{branch}")
+    budget = args.budget_mb or config.SITE_AUDIO_BUDGET_MB
+    config.SITE_AUDIO_BUDGET_MB = budget
+    print(f"仓库：{config.GITHUB_OWNER}/{config.GITHUB_REPO}  ·  站点分支：{branch}"
+          f"  ·  音频预算：{budget} MB")
     if args.dry_run:
         print("（--dry-run：只构建本地站点，不推送）")
 
-    print("\n[1/3] 刷新目录、生成 feed 与目录页")
-    site, n = publish.write_site()
-    print(f"      {site.name}/feed.xml     （{n} 集）")
-    print(f"      {site.name}/index.html")
+    # 先定滚动窗口：装得下哪些集，决定了 feed 收哪些集
+    print("\n[1/3] 按容量挑选上站的音频")
+    site = config.SITE_DIR
+    site.mkdir(parents=True, exist_ok=True)
+    r = publish.sync_audio(site, dry_run=args.dry_run)
+    print(f"      站内 {len(r['eps'])} 集 / 本地共 {r['total']} 集"
+          f" · 占用 {r['used_mb']:.0f} MB / 预算 {budget} MB")
+    if r["copied"] or r["skipped"] or r["removed"]:
+        print(f"      新增 {r['copied']} · 沿用 {r['skipped']} · 移出 {r['removed']}")
+    if r["left_out"]:
+        print(f"      {r['left_out']} 集因容量未上站，音频留在本地 content/**/audio/，"
+              f"文字稿仍随仓库保留")
 
-    print("\n[2/3] 同步音频到站点")
-    copied, skipped = publish.sync_audio(site, dry_run=args.dry_run)
-    total_mb = sum(f.stat().st_size for f in (site / "audio").glob("*.mp3")) / 1024 / 1024 \
-        if (site / "audio").exists() else 0
-    print(f"      新增/更新 {copied} 个，跳过 {skipped} 个 · 站点音频共 {total_mb:.0f} MB")
-    if total_mb > 900:
-        print(f"      ⚠️ 接近 GitHub Pages 的 1GB 站点上限，该把音频挪到对象存储了"
-              f"（改 AUDIO_BASE_URL 即可）", file=sys.stderr)
+    print("\n[2/3] 刷新目录、生成 feed 与目录页")
+    _, n = publish.write_site(r["eps"])
+    print(f"      {site.name}/feed.xml     （{n} 集，只收音频已上站的）")
+    print(f"      {site.name}/index.html   （列全部集，站外的只给文字稿）")
 
     if args.dry_run:
         print(f"\n本地站点已就绪：{site}")
@@ -471,7 +481,7 @@ def cmd_publish(args) -> None:
 
     print(f"\n[3/3] 推送到 {branch} 分支")
     try:
-        print("      " + publish.push_site(site, branch, f"发布站点：{n} 集"))
+        print("      " + publish.push_site(site, branch, f"发布站点：{n} 集可听"))
     except publish.GitHubCliError as e:
         print(f"  ❌ {e}", file=sys.stderr)
         return
@@ -537,6 +547,8 @@ def main() -> None:
     p = sub.add_parser("publish", help="发布到 GitHub Pages：站点推到 gh-pages 分支")
     p.add_argument("--branch", help=f"站点分支（默认 {config.PAGES_BRANCH}）")
     p.add_argument("--dry-run", action="store_true", help="只构建本地站点，不推送")
+    p.add_argument("--budget-mb", type=int,
+                   help=f"站点音频容量预算，MB（默认 {config.SITE_AUDIO_BUDGET_MB}）")
     p.set_defaults(func=cmd_publish)
 
     p = sub.add_parser("catalog", help="生成全集目录 CATALOG.md 并刷新 README 集数")

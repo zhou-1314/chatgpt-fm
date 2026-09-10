@@ -457,6 +457,16 @@ def han_count(text: str) -> int:
 MIN_HAN_CHARS = 6000
 
 
+class FabricationError(RuntimeError):
+    """解读稿相对原文膨胀得不合理，判定为模型在凭空编内容。"""
+
+
+# 解读稿汉字数 / 原文字符数 的上限。实测 50 集正常产出是 0.26-1.91；
+# 两集据导航壳页编造出来的稿子是 11.1 和 13.2。取 4.0 既能抓住编造，
+# 又给「原文短但解读正常」的情况留足余量。
+MAX_EXPANSION_RATIO = 4.0
+
+
 def interpret(article_meta: dict, article_body: str, slug: str) -> dict:
     """生成解读稿并写入 content/scripts/<slug>.md，返回解析后的字段。"""
     prompt = build_prompt(
@@ -492,6 +502,17 @@ def interpret(article_meta: dict, article_body: str, slug: str) -> dict:
                 result = retry
         except RuntimeError:
             pass  # 重写失败就用原稿
+
+    # 落盘前查一道：原文寥寥几百字却产出六七千汉字，只能是模型自己编的。
+    # 实际发生过——prompt 里"绝对不要少于 6000 汉字"这条硬要求，遇到信息量
+    # 不足的原文时，会把模型逼向编造而不是写短。
+    ratio = han_count(result["script"]) / max(len(article_body), 1)
+    if ratio > MAX_EXPANSION_RATIO:
+        raise FabricationError(
+            f"解读稿相对原文膨胀 {ratio:.1f} 倍（上限 {MAX_EXPANSION_RATIO}）："
+            f"原文 {len(article_body)} 字符 → 解读 {han_count(result['script'])} 汉字。"
+            f"判定为模型凭空编造，不予落盘。"
+        )
 
     frontmatter = {
         "episode_title": result["episode_title"],

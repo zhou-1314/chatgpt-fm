@@ -1,5 +1,5 @@
 {
-  "next_episode": 33,
+  "next_episode": 53,
   "articles": {
     "https://openai.com/index/jalapeno-first-results": {
       "stages": {
@@ -393,18 +393,13 @@
     },
     "https://openai.com/index/gpt-5-coding-design": {
       "stages": {
-        "fetched": true,
-        "interpreted": true,
-        "synthesized": true,
-        "packaged": true
+        "fetched": true
       },
       "source": "engineering",
       "slug": "2025-08-07-Coding and design with GPT-5",
       "title": "Coding and design with GPT-5",
       "published": "2025-08-07",
-      "voice": "zh-CN-YunxiNeural",
-      "duration_sec": 1316.1,
-      "episode": 27
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-coding-design"
     },
     "https://openai.com/index/gpt-5-amgen": {
       "stages": {
@@ -413,22 +408,18 @@
       "source": "engineering",
       "slug": "2025-08-07-How Amgen uses GPT-5",
       "title": "How Amgen uses GPT-5",
-      "published": "2025-08-07"
+      "published": "2025-08-07",
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-amgen"
     },
     "https://openai.com/index/gpt-5-cursor": {
       "stages": {
-        "fetched": true,
-        "interpreted": true,
-        "synthesized": true,
-        "packaged": true
+        "fetched": true
       },
       "source": "engineering",
       "slug": "2025-08-07-How Cursor uses GPT-5",
       "title": "How Cursor uses GPT-5",
       "published": "2025-08-07",
-      "voice": "zh-CN-YunyangNeural",
-      "duration_sec": 1423.6,
-      "episode": 28
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-cursor"
     },
     "https://openai.com/index/model-ml-chaz-englander": {
       "stages": {
@@ -492,13 +483,318 @@
     },
     "https://openai.com/index/navier-stokes-solution": {
       "stages": {
-        "fetched": true
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
       },
       "source": "research",
       "slug": "2026-09-08-On the Navier–Stokes Millennium Prize Problem",
       "title": "On the Navier–Stokes Millennium Prize Problem",
-      "published": "2026-09-08"
+      "published": "2026-09-08",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1362.3,
+      "episode": 33
+    },
+    "https://openai.com/index/research-acceleration-view-inside-openai": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-09-06-Research acceleration - The view inside OpenAI",
+      "title": "Research acceleration: The view inside OpenAI",
+      "published": "2026-09-06",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1326.3,
+      "episode": 34
+    },
+    "https://openai.com/index/gpt-6-astra": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-09-03-GPT-6 Astra - A new generation of intelligence",
+      "title": "GPT-6 Astra: A new generation of intelligence",
+      "published": "2026-09-03",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1588.2,
+      "episode": 35
+    },
+    "https://openai.com/index/ten-advances-in-mathematics": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-08-01-Ten advances in mathematics and theoretical computer science",
+      "title": "Ten advances in mathematics and theoretical computer science",
+      "published": "2026-08-01",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1503.7,
+      "episode": 36
+    },
+    "https://openai.com/index/how-two-settings-tripled-our-arc-agi-3-scores": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-07-29-How enabling two settings tripled our scores on the ARC-AGI-3 benchmark",
+      "title": "How enabling two settings tripled our scores on the ARC-AGI-3 benchmark",
+      "published": "2026-07-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1425.9,
+      "episode": 37
+    },
+    "https://openai.com/index/scientific-computing-agentic-ai": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-07-28-Scientific computing in the age of agentic AI",
+      "title": "Scientific computing in the age of agentic AI",
+      "published": "2026-07-28",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1425.8,
+      "episode": 38
+    },
+    "https://openai.com/index/separating-signal-from-noise-coding-evaluations": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-07-08-Separating signal from noise in coding evaluations",
+      "title": "Separating signal from noise in coding evaluations",
+      "published": "2026-07-08",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1388.5,
+      "episode": 39
+    },
+    "https://openai.com/index/introducing-genebench-pro": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-06-30-Introducing GeneBench-Pro",
+      "title": "Introducing GeneBench-Pro",
+      "published": "2026-06-30",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1438.0,
+      "episode": 40
+    },
+    "https://openai.com/index/ai-chemist-improves-reaction": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-06-17-A near-autonomous AI chemist improves a challenging reaction in medicinal chemistry",
+      "title": "A near-autonomous AI chemist improves a challenging reaction in medicinal chemistry",
+      "published": "2026-06-17",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1378.3,
+      "episode": 41
+    },
+    "https://openai.com/index/introducing-life-sci-bench": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-06-17-Introducing LifeSciBench",
+      "title": "Introducing LifeSciBench",
+      "published": "2026-06-17",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1456.0,
+      "episode": 42
+    },
+    "https://openai.com/index/deployment-simulation": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-06-16-Predicting model behavior before release by simulating deployment",
+      "title": "Predicting model behavior before release by simulating deployment",
+      "published": "2026-06-16",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1344.4,
+      "episode": 43
+    },
+    "https://openai.com/index/chatgpt-memory-dreaming": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-06-04-Dreaming - Better memory for a more helpful ChatGPT",
+      "title": "Dreaming: Better memory for a more helpful ChatGPT",
+      "published": "2026-06-04",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1394.0,
+      "episode": 44
+    },
+    "https://openai.com/index/model-disproves-discrete-geometry-conjecture": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-05-20-An OpenAI model has disproved a central conjecture in discrete geometry",
+      "title": "An OpenAI model has disproved a central conjecture in discrete geometry",
+      "published": "2026-05-20",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1259.5,
+      "episode": 45
+    },
+    "https://openai.com/index/what-parameter-golf-taught-us": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-05-12-What Parameter Golf taught us about AI-assisted research",
+      "title": "What Parameter Golf taught us about AI-assisted research",
+      "published": "2026-05-12",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1552.4,
+      "episode": 46
+    },
+    "https://openai.com/index/where-the-goblins-came-from": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-04-29-Where the goblins came from",
+      "title": "Where the goblins came from",
+      "published": "2026-04-29",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1346.3,
+      "episode": 47
+    },
+    "https://openai.com/index/introducing-openai-privacy-filter": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-04-22-Introducing OpenAI Privacy Filter",
+      "title": "Introducing OpenAI Privacy Filter",
+      "published": "2026-04-22",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1426.6,
+      "episode": 48
+    },
+    "https://openai.com/index/introducing-gpt-rosalind": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-04-16-Introducing GPT-Rosalind for life sciences research",
+      "title": "Introducing GPT-Rosalind for life sciences research",
+      "published": "2026-04-16",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1406.3,
+      "episode": 49
+    },
+    "https://openai.com/index/our-approach-to-the-model-spec": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-03-25-Inside our approach to the Model Spec",
+      "title": "Inside our approach to the Model Spec",
+      "published": "2026-03-25",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1256.6,
+      "episode": 50
+    },
+    "https://openai.com/index/instruction-hierarchy-challenge": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-03-10-Improving instruction hierarchy in frontier LLMs",
+      "title": "Improving instruction hierarchy in frontier LLMs",
+      "published": "2026-03-10",
+      "voice": "zh-CN-YunxiNeural",
+      "duration_sec": 1436.1,
+      "episode": 51
+    },
+    "https://openai.com/index/reasoning-models-chain-of-thought-controllability": {
+      "stages": {
+        "fetched": true,
+        "interpreted": true,
+        "synthesized": true,
+        "packaged": true
+      },
+      "source": "research",
+      "slug": "2026-03-05-Reasoning models struggle to control their chains of thought, and that’s good",
+      "title": "Reasoning models struggle to control their chains of thought, and that’s good",
+      "published": "2026-03-05",
+      "voice": "zh-CN-YunyangNeural",
+      "duration_sec": 1435.5,
+      "episode": 52
+    },
+    "https://openai.com/index/gpt-5-4-thinking-system-card": {
+      "stages": {},
+      "source": "research",
+      "skipped": "只提取到导航栏，页面没有正文: https://openai.com/index/gpt-5-4-thinking-system-card"
+    },
+    "https://openai.com/index/extending-single-minus-amplitudes-to-gravitons": {
+      "stages": {
+        "fetched": true
+      },
+      "source": "research",
+      "slug": "2026-03-04-Extending single-minus amplitudes to gravitons",
+      "title": "Extending single-minus amplitudes to gravitons",
+      "published": "2026-03-04"
     }
   },
-  "voice_rotation": 32
+  "voice_rotation": 52
 }

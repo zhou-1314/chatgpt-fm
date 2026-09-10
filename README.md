@@ -6,7 +6,7 @@
 
 用碎片时间听懂最前沿的 AI
 
-![episodes](https://img.shields.io/badge/已更新-21%20集-1DB954)
+![episodes](https://img.shields.io/badge/已更新-52%20集-1DB954)
 ![update](https://img.shields.io/badge/更新频率-每周日-FF8800)
 ![language](https://img.shields.io/badge/语言-简体中文-blue)
 
@@ -39,12 +39,12 @@ AI 技术演进的时间线。通勤、健身、做家务的时候听一听就�
 
 | 来源 | 集数 | 内容 |
 |---|:---:|---|
-| 🛠️ Engineering | 21 | 工程实践（Codex、harness、基础设施…） |
-| 🔬 Research | 0 | 研究与论文（推理、评测、可解释性…） |
+| 🛠️ Engineering | 32 | 工程实践（Codex、harness、基础设施…） |
+| 🔬 Research | 20 | 研究与论文（推理、评测、可解释性…） |
 | 🚀 Product | 0 | 模型与产品发布（GPT 系列、API、ChatGPT…） |
 | 🛡️ Safety | 0 | 安全与对齐（Preparedness、威胁情报…） |
 | 📰 News 周报 | 0 | 「一周快讯」，速览每周官方动态 |
-| | **21 集** | 每周日更新 |
+| | **52 集** | 每周日更新 |
 
 前四个源逐篇做深度解读；news 类内容（公司动态、政策、客户故事）多为公告，
 按周聚合成几分钟的「一周快讯」。
@@ -53,18 +53,18 @@ AI 技术演进的时间线。通勤、健身、做家务的时候听一听就�
 
 <!-- LATEST:START -->
 
+- 🔬 `EP33` · 2026-09-08 · [AI 用八十八小时攻克九十年数学悬案：OpenAI 解开流体力学千年大奖之谜](content/openai/research/scripts/2026-09-08-On%20the%20Navier%E2%80%93Stokes%20Millennium%20Prize%20Problem.md)
+- 🔬 `EP34` · 2026-09-06 · [OpenAI内部实录：AI研究算力已是人类三倍，自动化科研背后两起安全警报](content/openai/research/scripts/2026-09-06-Research%20acceleration%20-%20The%20view%20inside%20OpenAI.md)
+- 🔬 `EP35` · 2026-09-03 · [GPT 六 Astra 全面解析：计算机操控、网络安全与 AI 对齐的新一代突破](content/openai/research/scripts/2026-09-03-GPT-6%20Astra%20-%20A%20new%20generation%20of%20intelligence.md)
 - 🛠️ `EP1` · 2026-08-25 · [OpenAI 首款自研芯片 Jalapeño 实测：推理效率与速度全面刷新行业基准](content/openai/engineering/scripts/2026-08-25-Jalape%C3%B1o%E2%80%99s%20first%20results%20show%20industry-leading%20speed%20and%20efficiency%20in%20AI%20inference.md)
 - 🛠️ `EP2` · 2026-08-03 · [六个月打造实时语音AI：OpenAI全双工架构工程内幕](content/openai/engineering/scripts/2026-08-03-How%20we%20built%20a%20realtime%20system%20for%20responsive%20voice%20AI%20in%20six%20months.md)
+- 🔬 `EP36` · 2026-08-01 · [AI 如何解开十道数学百年难题，以及这对我们意味着什么](content/openai/research/scripts/2026-08-01-Ten%20advances%20in%20mathematics%20and%20theoretical%20computer%20science.md)
+- 🔬 `EP37` · 2026-07-29 · [两个设置让得分翻三倍：基准测试到底在测什么](content/openai/research/scripts/2026-07-29-How%20enabling%20two%20settings%20tripled%20our%20scores%20on%20the%20ARC-AGI-3%20benchmark.md)
 - 🛠️ `EP3` · 2026-07-29 · [让模型优化模型：GPT 五点六如何同时拿下前沿智能与前沿效率](content/openai/engineering/scripts/2026-07-29-How%20GPT-5.6%20fuses%20frontier%20intelligence%20with%20frontier%20efficiency.md)
-- 🛠️ `EP4` · 2026-06-30 · [两个不可能的 Bug：OpenAI 如何用流行病学思维破解神秘崩溃](content/openai/engineering/scripts/2026-06-30-Core%20dump%20epidemiology%20-%20fixing%20an%2018-year-old%20bug.md)
-- 🛠️ `EP5` · 2026-05-27 · [让 AI 越用越强：OpenAI 税务系统自我改进的工程方法论全拆解](content/openai/engineering/scripts/2026-05-27-Building%20self-improving%20tax%20agents%20with%20Codex.md)
-- 🛠️ `EP6` · 2026-05-13 · [给 AI 编程 Agent 造一把安全锁：Codex Windows 沙盒设计全记录](content/openai/engineering/scripts/2026-05-13-Building%20a%20safe%2C%20effective%20sandbox%20to%20enable%20Codex%20on%20Windows.md)
-- 🛠️ `EP7` · 2026-05-05 · [告别训练崩溃：OpenAI MRC 如何让超算网络故障变成背景噪音](content/openai/engineering/scripts/2026-05-05-Unlocking%20large%20scale%20AI%20training%20networks%20with%20MRC%20%28Multipath%20Reliable%20Connection%29.md)
-- 🛠️ `EP8` · 2026-05-04 · [九亿用户背后的低延迟秘密：OpenAI 实时语音 AI 架构深度解析](content/openai/engineering/scripts/2026-05-04-How%20OpenAI%20delivers%20low-latency%20voice%20AI%20at%20scale.md)
 
 <!-- LATEST:END -->
 
-📋 **完整 21 集目录（可点开每集文字稿）** 👉 **[CATALOG.md](CATALOG.md)**
+📋 **完整 52 集目录（可点开每集文字稿）** 👉 **[CATALOG.md](CATALOG.md)**
 
 ## 📖 也可以直接读文字版
 
